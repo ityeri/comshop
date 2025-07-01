@@ -1,0 +1,4 @@
+name: comshop
+version: '1.0-SNAPSHOT'
+main: com.github.ityeri.comshop.ComshopPlugin
+api-version: '1.21'
