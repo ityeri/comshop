@@ -29,7 +29,7 @@ tasks.runServer {
 }
 
 kotlin {
-    jvmToolchain(22)
+    jvmToolchain(21)
 }
 
 tasks.jar {
