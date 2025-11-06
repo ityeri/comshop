@@ -3,5 +3,5 @@ plugins {
 }
 rootProject.name = "comshop"
 
-include("core")
-include("plugin")
+include("comshop-core")
+include("comshop-plugin")

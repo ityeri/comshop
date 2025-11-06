@@ -1,0 +1,4 @@
+name: comshop-plugin
+version: '1.0-SNAPSHOT'
+main: ComshopPlugin
+api-version: '1.21'
