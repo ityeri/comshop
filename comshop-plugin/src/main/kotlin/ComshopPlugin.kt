@@ -12,8 +12,6 @@ class ComshopPlugin : JavaPlugin() {
 
     override fun onEnable() {
         val command = command("comshop") {
-            op = false // Not implemented yet
-
             arguments {
                 "int" { IntegerArgumentType.integer() }
                 "word" { StringArgumentType.word() }
@@ -25,7 +23,6 @@ class ComshopPlugin : JavaPlugin() {
                 val word = getArg("word1", String::class)
                 val bool = getArg("bool", Boolean::class)
                 source.sender.sendMessage("int: $int, word: $word, bool: $bool")
-
                 0
             }
 
@@ -37,15 +34,15 @@ class ComshopPlugin : JavaPlugin() {
                 executes { source ->
                     val player = getArg("player", PlayerSelectorArgumentResolver::class)
                         .resolve(source).first()
-
                     player.sendMessage("Someone want to talking with you!")
-
                     0
                 }
             }
 
             then("op-only") {
-                op = true // Not implemented yet
+                requires { source ->
+                    source.sender.isOp
+                }
 
                 executes { source ->
                     source.sender.sendMessage("You are used op-only command! good...")
