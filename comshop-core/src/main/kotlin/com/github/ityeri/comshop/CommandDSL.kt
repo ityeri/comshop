@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
-class CommandDsl(val name: String) : CommandBuilder {
+class CommandDSL(val name: String) : CommandBuilder {
     private val arguments: MutableList<ArgumentData<*>> = mutableListOf()
     private val subCommands: MutableList<CommandBuilder> = mutableListOf()
     private var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
@@ -28,8 +28,8 @@ class CommandDsl(val name: String) : CommandBuilder {
         subCommands.add(block())
     }
 
-    fun then(name: String, block: CommandDsl.() -> Unit) {
-        val commandDsl = CommandDsl(name)
+    fun then(name: String, block: CommandDSL.() -> Unit) {
+        val commandDsl = CommandDSL(name)
         subCommands.add(commandDsl)
         commandDsl.apply(block)
     }
