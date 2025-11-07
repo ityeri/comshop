@@ -8,12 +8,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.plugin.java.JavaPlugin
 
-fun command(name: String, block: CommandDSL.() -> Unit): CommandDSL {
-    val commandDsl = CommandDSL(name)
-    commandDsl.apply(block)
-    return commandDsl
-}
-
 fun register(commandDsl: CommandDSL, plugin: JavaPlugin) {
     plugin.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS) { commands ->
         val argumentBuilder = commandDsl.build()

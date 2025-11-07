@@ -71,3 +71,9 @@ class CommandDSL(val name: String) : CommandBuilder {
         return rootBuilder
     }
 }
+
+fun command(name: String, block: CommandDSL.() -> Unit): CommandBuilder {
+    val commandDsl = CommandDSL(name)
+    commandDsl.apply(block)
+    return commandDsl
+}
