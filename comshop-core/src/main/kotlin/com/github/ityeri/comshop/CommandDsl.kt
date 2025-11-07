@@ -5,9 +5,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
-class CommandDsl(val name: String) {
+class CommandDsl(val name: String) : CommandBuilder {
     private val arguments: MutableList<ArgumentData<*>> = mutableListOf()
-    private val subCommands: MutableList<CommandDsl> = mutableListOf()
+    private val subCommands: MutableList<CommandBuilder> = mutableListOf()
     private var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
         { source -> 1 }
     private var permissionChecker: (source: CommandSourceStack) -> Boolean = { true }
@@ -24,13 +24,17 @@ class CommandDsl(val name: String) {
         executor = block
     }
 
+    fun then(block: () -> CommandBuilder) {
+        subCommands.add(block())
+    }
+
     fun then(name: String, block: CommandDsl.() -> Unit) {
         val commandDsl = CommandDsl(name)
         subCommands.add(commandDsl)
         commandDsl.apply(block)
     }
 
-    fun build(): LiteralArgumentBuilder<CommandSourceStack> {
+    override fun build(): LiteralArgumentBuilder<CommandSourceStack> {
         val rootBuilder = literal<CommandSourceStack>(name)
 
         rootBuilder.requires { source -> permissionChecker(source) }
