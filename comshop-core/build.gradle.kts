@@ -9,8 +9,7 @@ version = "0.0.1"
 publishing {
     publications {
         create<MavenPublication>("gpr") {
-            from(components["java"])
-            artifactId = project.name
+            artifactId = "comshop-core"
         }
     }
     repositories {
