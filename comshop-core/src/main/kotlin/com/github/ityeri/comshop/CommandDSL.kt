@@ -5,12 +5,22 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
-class CommandDsl(val name: String) {
+class CommandDSL(val name: String) : CommandBuilder {
     private val arguments: MutableList<ArgumentData<*>> = mutableListOf()
-    private val subCommands: MutableList<CommandDsl> = mutableListOf()
+    private val subCommands: MutableList<CommandBuilder> = mutableListOf()
     private var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
         { source -> 1 }
     private var permissionChecker: (source: CommandSourceStack) -> Boolean = { true }
+
+
+    companion object {
+        fun command(name: String, block: CommandDSL.() -> Unit): CommandBuilder {
+            val commandDsl = CommandDSL(name)
+            commandDsl.apply(block)
+            return commandDsl
+        }
+    }
+
 
     fun requires(block: (source: CommandSourceStack) -> Boolean) {
         permissionChecker = block
@@ -24,19 +34,24 @@ class CommandDsl(val name: String) {
         executor = block
     }
 
-    fun then(name: String, block: CommandDsl.() -> Unit) {
-        val commandDsl = CommandDsl(name)
+    fun then(block: () -> CommandBuilder) {
+        subCommands.add(block())
+    }
+
+    fun then(name: String, block: CommandDSL.() -> Unit) {
+        val commandDsl = CommandDSL(name)
         subCommands.add(commandDsl)
         commandDsl.apply(block)
     }
 
-    fun build(): LiteralArgumentBuilder<CommandSourceStack> {
+
+    override fun createBuilder(): LiteralArgumentBuilder<CommandSourceStack> {
         val rootBuilder = literal<CommandSourceStack>(name)
 
         rootBuilder.requires { source -> permissionChecker(source) }
 
         for (subCommand in subCommands) {
-            rootBuilder.then(subCommand.build())
+            rootBuilder.then(subCommand.createBuilder())
         }
 
         // TODO 아무리 봐도 이 코드는 좀 아닌것 같음 아니다 꽤 괜찮을지도
