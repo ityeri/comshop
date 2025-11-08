@@ -12,6 +12,16 @@ class CommandDSL(val name: String) : CommandBuilder {
         { source -> 1 }
     private var permissionChecker: (source: CommandSourceStack) -> Boolean = { true }
 
+
+    companion object {
+        fun command(name: String, block: CommandDSL.() -> Unit): CommandBuilder {
+            val commandDsl = CommandDSL(name)
+            commandDsl.apply(block)
+            return commandDsl
+        }
+    }
+
+
     fun requires(block: (source: CommandSourceStack) -> Boolean) {
         permissionChecker = block
     }
@@ -34,13 +44,14 @@ class CommandDSL(val name: String) : CommandBuilder {
         commandDsl.apply(block)
     }
 
-    override fun build(): LiteralArgumentBuilder<CommandSourceStack> {
+
+    override fun createBuilder(): LiteralArgumentBuilder<CommandSourceStack> {
         val rootBuilder = literal<CommandSourceStack>(name)
 
         rootBuilder.requires { source -> permissionChecker(source) }
 
         for (subCommand in subCommands) {
-            rootBuilder.then(subCommand.build())
+            rootBuilder.then(subCommand.createBuilder())
         }
 
         // TODO 아무리 봐도 이 코드는 좀 아닌것 같음 아니다 꽤 괜찮을지도
@@ -70,10 +81,4 @@ class CommandDSL(val name: String) : CommandBuilder {
 
         return rootBuilder
     }
-}
-
-fun command(name: String, block: CommandDSL.() -> Unit): CommandBuilder {
-    val commandDsl = CommandDSL(name)
-    commandDsl.apply(block)
-    return commandDsl
 }

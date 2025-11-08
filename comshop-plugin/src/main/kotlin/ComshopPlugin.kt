@@ -1,5 +1,5 @@
-import com.github.ityeri.comshop.command
-import com.github.ityeri.comshop.register
+import com.github.ityeri.comshop.CommandDSL.Companion.command
+import com.github.ityeri.comshop.CommandRegistrar
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin
 class ComshopPlugin : JavaPlugin() {
 
     override fun onEnable() {
+        CommandRegistrar.lifecycleRegister(this)
+
         val command = command("comshop") {
             arguments {
                 "int" { IntegerArgumentType.integer() }
@@ -58,7 +60,7 @@ class ComshopPlugin : JavaPlugin() {
             }
         }
 
-        register(command, this)
+        CommandRegistrar.register(command)
     }
 
     override fun onDisable() {
