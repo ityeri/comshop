@@ -1,4 +1,4 @@
-package com.github.ityeri.comshop
+package com.github.ityeri.comshop.builder
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import io.papermc.paper.command.brigadier.CommandSourceStack

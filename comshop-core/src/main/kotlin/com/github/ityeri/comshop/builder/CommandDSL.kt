@@ -1,5 +1,8 @@
-package com.github.ityeri.comshop
+package com.github.ityeri.comshop.builder
 
+import com.github.ityeri.comshop.ArgumentData
+import com.github.ityeri.comshop.ArgumentRegistrar
+import com.github.ityeri.comshop.ContextWrapper
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
