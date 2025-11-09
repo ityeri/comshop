@@ -61,6 +61,8 @@ class ComshopPlugin : JavaPlugin() {
         }
 
         CommandRegistrar.register(command)
+
+        CommandRegistrar.register(ExampleCommand())
     }
 
     override fun onDisable() {
