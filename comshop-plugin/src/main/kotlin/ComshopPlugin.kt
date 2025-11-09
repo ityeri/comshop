@@ -1,4 +1,4 @@
-import com.github.ityeri.comshop.CommandDSL.Companion.command
+import com.github.ityeri.comshop.builder.CommandDSL.Companion.command
 import com.github.ityeri.comshop.CommandRegistrar
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
@@ -61,6 +61,8 @@ class ComshopPlugin : JavaPlugin() {
         }
 
         CommandRegistrar.register(command)
+
+        CommandRegistrar.register(ExampleCommand())
     }
 
     override fun onDisable() {
