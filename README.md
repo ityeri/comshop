@@ -255,7 +255,7 @@ paper api 에서 Brigadier 를 위해 지원하는 타입들은
 https://docs.papermc.io/paper/dev/command-api/arguments/minecraft/
 ) 에 정리되어 있습니다
 
-# full example
+# full example - DSL
 
 ```kotlin
 import com.github.ityeri.comshop.CommandDSL.Companion.command
@@ -311,6 +311,10 @@ class ComshopPlugin : JavaPlugin() {
     }
 }
 ```
+
+# full example - CLASS
+
+TODO
 
 # TODO 앞으로 추가될수도 있는것
 
