@@ -1,11 +1,92 @@
 # comshop
 
-> kommand 에 영감을 받아 만들어진 Brigadier 의 dsl 래퍼이자 명령어 라이브러리
+> [kommand](https://github.com/monun/kommand) 에 영감을 받아 만들어진 
+> [Brigadier](https://github.com/mojang/Brigadier) 의 DSL 래퍼이자 명령어 라이브러리
 
-comshop 은 kotlin dsl 을 통해 paper api 에서 동작하는 
-플러그인 명령어를 정의하기 위한 DSL 을 제공합니다
+[Brigadier](https://github.com/mojang/Brigadier) 는 모장에서 명령어 파싱을 위해 사용하는 라이브러리이며,
+[kommand](https://github.com/monun/kommand) 는 내부적으로 Brigadier 를 사용합니다.
+때문에 Brigadier 와 kommand 의 명령어 정의는 구조적으로 유사합니다.
 
-명령어 파싱을 위해 모장에서 사용하는 라이브러리인 `Brigadier` 를 기반으로 동작합니다
+Brigadier
+```java
+literal("test")
+    .then(argument("number", IntegerArgumentType.integer())
+        .then(argument("word", StringArgumentType.word())
+            .then(argument("flag", BoolArgumentType.bool())
+                .executes(context -> {
+                    int number = IntegerArgumentType.getInteger(context, "number");
+                    String word = StringArgumentType.getString(context, "word");
+                    boolean flag = BoolArgumentType.getBool(context, "flag");
+                    return 0;
+                })
+            )
+        )
+    );
+```
+
+kommand
+```kotlin
+kommand {
+    register("test") {
+        then("number" to intArgument) {
+            then("word" to word) {
+                then("flag" to bool) {
+                    executes { context ->
+                        val number: Int by context
+                        val word: String by context
+                        val flag: Boolean by context
+                        0
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+kommand 는 Brigadier 와 비슷하면서도 코틀린 친화적인 형태로 명령어를 정의할수 있습니다.
+하지만 Brigadier 와 비슷하게, 인자가 많아지면서
+코드의 들여쓰기와 길이가 크게 늘어납니다. 
+또한 재귀적인 체인 형태로 명령어 노드가 이어지고 코드가 쓰여지는 kommand 와 Brigadier 의 특성상,
+인자 정의부분, 실행 블록, 하위 명령어 블록을 명확하게 구분하기 어렵습니다
+
+아래는 같은 구조의 명령어를 comshop 을 활용해 작성한 코드입니다
+```kotlin
+command("test") {
+    arguments {
+        "number" { IntegerArgumentType.integer() }
+        "word" { StringArgumentType.word() }
+        "flag" { BoolArgumentType.bool() }
+    }
+
+    executes {
+        val number = getArg("number", Int::class)
+        val word = getArg("word", String::class)
+        val flag = getArg("flag", Boolean::class)
+        0
+    }
+}
+```
+
+코드의 들여쓰기가 줄며, 인자를 정의하는 부분과 실행블록이 명확히 분리되고 구분됩니다.
+하위 명령어는 then() 을 활용해 같은 형태로 손쉽게 정의할수 있습니다
+
+---
+
+* comshop 은 kotlin dsl 을 통해 paper api 에서 동작하는 
+  플러그인 명령어를 정의하기 위한 DSL 을 제공합니다
+
+* 다량의 하위 명령어에서 여전히 발생하는 들여쓰기와 코드 길이 문제를 해결하기 위해
+  명령어를 개별 클래스로 분리하기에 용이한 추상 클래스를 제공합니다
+
+* 명령어 파싱을 위해 모장에서 사용하는 라이브러리인 `Brigadier` 를 기반으로 동작합니다
+
+---
+
+* Supported Paper api versions
+  * 1.21.10
+
+향후 구버전에 대한 지원이 추가될수 있습니다
 
 # dependency
 
