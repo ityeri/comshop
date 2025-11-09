@@ -84,7 +84,7 @@ command("test") {
 ---
 
 * Supported Paper api versions
-  * 1.21.10
+  * 1.21.10 - java 21
 
 향후 구버전에 대한 지원이 추가될수 있습니다
 
