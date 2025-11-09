@@ -1,7 +1,5 @@
 import com.github.ityeri.comshop.CommandDSL.Companion.command
 import com.github.ityeri.comshop.CommandRegistrar
-import com.mojang.brigadier.arguments.BoolArgumentType
-import com.mojang.brigadier.arguments.IntegerArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver
@@ -13,54 +11,39 @@ class ComshopPlugin : JavaPlugin() {
     override fun onEnable() {
         CommandRegistrar.lifecycleRegister(this)
 
-        val command = command("comshop") {
+        val greetingCommand = command("greeting") {
+            requires { source -> source.sender.isOp }
+
             arguments {
-                "int" { IntegerArgumentType.integer() }
-                "word" { StringArgumentType.word() }
-                "bool" { BoolArgumentType.bool() }
+                "message" { StringArgumentType.word() }
             }
 
             executes { source ->
-                val int = getArg("int", Int::class)
-                val word = getArg("word1", String::class)
-                val bool = getArg("bool", Boolean::class)
-                source.sender.sendMessage("int: $int, word: $word, bool: $bool")
+                val message = getArg("message", String::class)
+                source.sender.sendMessage(message)
+
                 0
             }
 
-            then("tell") {
+            then("player") {
                 arguments {
                     "player" { ArgumentTypes.player() }
+                    "message" { StringArgumentType.word() }
                 }
 
                 executes { source ->
-                    val player = getArg("player", PlayerSelectorArgumentResolver::class)
-                        .resolve(source).first()
-                    player.sendMessage("Someone want to talking with you!")
+                    val playerResolver = getArg("player", PlayerSelectorArgumentResolver::class)
+                    val player = playerResolver.resolve(source).first()
+                    val message = getArg("message", String::class)
+
+                    player.sendMessage(message)
+
                     0
-                }
-            }
-
-            then("op-only") {
-                requires { source ->
-                    source.sender.isOp
-                }
-
-                executes { source ->
-                    source.sender.sendMessage("You are used op-only command! good...")
-                    0
-                }
-
-                then("wasans") {
-                    executes { source ->
-                        source.sender.sendMessage("wa papyrus")
-                        0
-                    }
                 }
             }
         }
 
-        CommandRegistrar.register(command)
+        CommandRegistrar.register(greetingCommand)
     }
 
     override fun onDisable() {
