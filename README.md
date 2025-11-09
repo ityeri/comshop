@@ -1,5 +1,3 @@
-TODO 남은 타입 정리 + 클래스 상속형 명령어 빌더는 이름 뭘로할거임?
-
 # comshop
 
 > kommand 에 영감을 받아 만들어진 Brigadier 의 dsl 래퍼이자 명령어 라이브러리
@@ -8,6 +6,37 @@ comshop 은 kotlin dsl 을 통해 paper api 에서 동작하는
 플러그인 명령어를 정의하기 위한 DSL 을 제공합니다
 
 명령어 파싱을 위해 모장에서 사용하는 라이브러리인 `Brigadier` 를 기반으로 동작합니다
+
+# dependency
+
+comshop 은 JitPack 을 통해 배포됩니다
+
+kotlin
+```kotlin
+repositories {
+    maven("https://jitpack.io") {
+        name = "jitpack"
+    }
+}
+
+dependencies {
+    implementation("com.github.ityeri:comshop-core:v0.2.0")
+}
+```
+
+groovy
+```groovy
+repositories {
+    maven {
+        url "https://jitpack.io"
+        name = "jitpack"
+    }
+}
+
+dependencies {
+    implementation 'com.github.ityeri:comshop-core:v0.2.0'
+}
+```
 
 # usage
 
@@ -137,11 +166,13 @@ comshop 은 Brigadier 를 래핑하며, 때문에 `ArgumentType` 의 구현체�
 
 페이퍼에서 제공하는 대부분의 인수 타입은 보통 그 타입을 그대로 반환하지 않고,
 `...SelectorArgumentResolver` 라 하는 래퍼에 의해 래핑되어 반환됩니다.
-
-(예컨대, `ArgumentType.player` 는 `Player` 가 아닌 `PlayerSelectorArgumentResolver` 를 반환합니다)
+(예컨대, `ArgumentType.player` 는 `Player` 가 아닌 
+`PlayerSelectorArgumentResolver` 를 반환합니다)
 
 paper api 에서 Brigadier 를 위해 지원하는 타입들은 
-[Paper docs - Development / API / Command API / Arguments](https://docs.papermc.io/paper/dev/command-api/arguments/minecraft/) 부분에 정리되어 있습니다
+[Paper docs - Development / API / Command API / Arguments](
+https://docs.papermc.io/paper/dev/command-api/arguments/minecraft/
+) 에 정리되어 있습니다
 
 # full example
 
