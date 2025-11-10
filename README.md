@@ -101,7 +101,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.ityeri:comshop-core:v0.2.0")
+    implementation("com.github.ityeri:comshop-core:v1.0.0-beta")
 }
 ```
 
@@ -115,7 +115,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.ityeri:comshop-core:v0.2.0'
+    implementation 'com.github.ityeri:comshop-core:v1.0.0-beta'
 }
 ```
 

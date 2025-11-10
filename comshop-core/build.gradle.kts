@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.ityeri"
-version = "0.0.1"
+version = "v1.0.0-beta"
 base.archivesName.set("comshop-core")
 
 publishing {
