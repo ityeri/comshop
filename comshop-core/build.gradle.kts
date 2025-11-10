@@ -4,13 +4,13 @@ plugins {
 }
 
 group = "io.github.ityeri"
-version = "0.0.1"
+version = "v1.0.0-beta"
+base.archivesName.set("comshop-core")
 
 publishing {
     publications {
         create<MavenPublication>("gpr") {
-            from(components["java"])
-            artifactId = project.name
+            artifactId = "comshop-core"
         }
     }
     repositories {

@@ -1,0 +1,8 @@
+package com.github.ityeri.comshop.builder
+
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import io.papermc.paper.command.brigadier.CommandSourceStack
+
+interface CommandBuilder {
+    fun createBuilder(): LiteralArgumentBuilder<CommandSourceStack>
+}
