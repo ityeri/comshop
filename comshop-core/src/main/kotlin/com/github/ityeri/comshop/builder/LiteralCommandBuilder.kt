@@ -33,12 +33,6 @@ abstract class LiteralCommandBuilder() : CommandBuilder {
         subCommands.add(builder)
     }
 
-    fun then(name: String, block: CommandDSL.() -> Unit) {
-        val commandDsl = CommandDSL(name)
-        subCommands.add(commandDsl)
-        commandDsl.apply(block)
-    }
-
 
     override fun createBuilder(): LiteralArgumentBuilder<CommandSourceStack> {
         val rootBuilder = literal<CommandSourceStack>(name)

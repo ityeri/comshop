@@ -16,4 +16,10 @@ class CommandDSL(override val name: String) : LiteralCommandBuilder() {
             return commandDsl
         }
     }
+
+    fun then(name: String, block: CommandDSL.() -> Unit) {
+        val commandDsl = CommandDSL(name)
+        subCommands.add(commandDsl)
+        commandDsl.apply(block)
+    }
 }
