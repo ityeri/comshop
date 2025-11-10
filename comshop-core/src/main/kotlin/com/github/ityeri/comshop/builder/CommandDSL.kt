@@ -10,7 +10,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 class CommandDSL(override val name: String) : LiteralCommandBuilder() {
     companion object {
-        fun command(name: String, block: CommandDSL.() -> Unit): CommandBuilder {
+        fun command(name: String, block: CommandDSL.() -> Unit = {}): CommandBuilder {
             val commandDsl = CommandDSL(name)
             commandDsl.apply(block)
             return commandDsl
