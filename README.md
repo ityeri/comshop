@@ -228,8 +228,39 @@ Unsinged integer: 120, flag: true
 
 ## DSL 과 CLASS 명령어를 같이 활용해 보기
 
-TODO (문단 제목이나 구성, 어떻게 설명할건지를 생각해 봐야함)
-+ 클래스 안넘겨도 되는거
+DSL 을 활용해 만든 명령어와 클래스로 만든 명령어는
+`then` 매서드로 서로 혼용이 가능합니다
+
+```kotlin
+class ExampleCommand : LiteralCommandBuilder() {
+    override val name: String = "example"
+    init { ... }
+}
+
+val greetingCommand = command("greeting") {
+    ...
+    then(ExampleCommand())
+}
+```
+
+```kotlin
+class ExampleCommand : LiteralCommandBuilder() {
+    override val name: String = "example"
+
+    init {
+        ...
+        then { command("wasans") {
+            executes { source ->
+                source.sender.sendMessage("This is wasans command")
+                0
+            }
+        }}
+    }
+}
+```
+
+TODO 제네릭을 추가, 값 자체를 받기 + apply 블럭은 선택
+이러면??? 리터럴 커내드 고유 어쩌구가 필요가 없 + 혼용 자체를 생각할 필요가 없듬
 
 ## 명령어 등록하기
 
