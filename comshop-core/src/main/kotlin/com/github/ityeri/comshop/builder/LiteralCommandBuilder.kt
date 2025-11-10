@@ -28,8 +28,9 @@ abstract class LiteralCommandBuilder() : CommandBuilder {
         executor = block
     }
 
-    fun then(block: () -> CommandBuilder) {
-        subCommands.add(block())
+    fun <T: CommandBuilder> then(builder: T, block: T.() -> Unit = {}) {
+        builder.apply(block)
+        subCommands.add(builder)
     }
 
     fun then(name: String, block: CommandDSL.() -> Unit) {
