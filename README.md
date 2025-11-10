@@ -179,9 +179,88 @@ val greetingCommand = command("greeting") {
 }
 ```
 
-## 상속을 활용한 명령어 만들어보기
+인게임에서:
+```
+/greeting 안녕!
+안녕!
+```
+```
+/greeting some_player 와샍으!
+와샍으! (지정된 플레이어에게)
+```
 
-TODO
+## 클래스 단위로 명령어 만들어보기
+
+DSL 을 활용한 명령어 정의는 직관적이고 간결하지만,
+하나의 DSL 문 안에 여러개의 하위 명령어나 기능이 모이게 되면
+코드가 길어지는 현상은 필연적으로 발생합니다.
+이런 상황을 위해, 명령어의 정의를 클래스로 분리하여 작성하기에 용이하도록
+`LiteralCommandBuilder` 라는 추상 클래스를 제공합니다
+
+```kotlin
+class ExampleCommand : LiteralCommandBuilder() {
+    override val name: String = "example"
+
+    init {
+        arguments {
+            "unsigned int" { IntegerArgumentType.integer(0) }
+            "flag" { BoolArgumentType.bool() }
+        }
+
+        executes { source ->
+            val integer = getArg("unsigned int", Int::class)
+            val flag = getArg("flag", Boolean::class)
+            source.sender.sendMessage("Unsinged integer: $integer, flag: $flag")
+            1
+        }
+    }
+}
+```
+
+init 블록 내부는 상술한 DSL 과 똑같이 작성할수 있습니다.
+차이점은 한 명령어의 코드가 하나의 클래스라는 덩어리로 분리된다는 것입니다
+
+인게임에서:
+```
+example 120 true
+Unsinged integer: 120, flag: true
+```
+
+## DSL 과 CLASS 명령어를 같이 활용해 보기
+
+DSL 을 활용해 만든 명령어와 클래스로 만든 명령어는
+`then` 매서드로 서로 혼용이 가능합니다
+
+```kotlin
+class ExampleCommand : LiteralCommandBuilder() {
+    override val name: String = "example"
+    init { ... }
+}
+
+val greetingCommand = command("greeting") {
+    ...
+    then(ExampleCommand())
+}
+```
+
+```kotlin
+class ExampleCommand : LiteralCommandBuilder() {
+    override val name: String = "example"
+
+    init {
+        ...
+        then { command("wasans") {
+            executes { source ->
+                source.sender.sendMessage("This is wasans command")
+                0
+            }
+        }}
+    }
+}
+```
+
+TODO 제네릭을 추가, 값 자체를 받기 + apply 블럭은 선택
+이러면??? 리터럴 커내드 고유 어쩌구가 필요가 없 + 혼용 자체를 생각할 필요가 없듬
 
 ## 명령어 등록하기
 
@@ -204,21 +283,24 @@ CommandRegistrar.lifecycleRegister(plugin) // plugin: JavaPlugin
 `LifecycleEvents.COMMANDS` 가 트리거 될때입니다.
 
 ```kotlin
-CommandRegistrar.register(command)
+CommandRegistrar.register(command) // command: CommandBuilder
+```
+
+DSL 을 활용해 작성한 명령어를 등록하는것과,
+상속을 통해 만들어진 클래스 형태의 명령어를 등록하는 방법은 같습니다
+
+```kotlin
+val greetingCommand = command("greeting") { ... }
+CommandRegistrar.register(greetingCommand)
+```
+
+```kotlin
+class ExampleCommand : LiteralCommandBuilder() { ... }
+CommandRegistrar.register(ExampleCommand())
 ```
 
 > `lifecycleRegister(plugin)` 와 `register(command)` 중에 뭘 먼저 호출하는지는 중요하지 않습니다.
 > 다만 둘다 `LifecycleEvents.COMMANDS` 이전 시점엔 완료 되어 있어야 합니다
-
-인게임에서:
-
-```
-/greeting 안녕!
-```
-
-```
-/greeting some_player 와샍으!
-```
 
 ## 사용할수 있는 인수 타입들
 
@@ -255,7 +337,12 @@ paper api 에서 Brigadier 를 위해 지원하는 타입들은
 https://docs.papermc.io/paper/dev/command-api/arguments/minecraft/
 ) 에 정리되어 있습니다
 
-# full example - DSL
+# examples
+
+전체 예제코드 내지 테스트 코드는 
+라이브러리 소스코드의 comshop-plugin 모듈 내에 포함되어 있습니다
+
+## full example - DSL
 
 ```kotlin
 import com.github.ityeri.comshop.CommandDSL.Companion.command
@@ -312,11 +399,47 @@ class ComshopPlugin : JavaPlugin() {
 }
 ```
 
-# full example - CLASS
+## full example - CLASS
 
-TODO
+```kotlin
+import com.github.ityeri.comshop.builder.LiteralCommandBuilder
+import com.mojang.brigadier.arguments.BoolArgumentType
+import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.github.ityeri.comshop.CommandRegistrar
+import org.bukkit.plugin.java.JavaPlugin
 
-# TODO 앞으로 추가될수도 있는것
+class ExampleCommand : LiteralCommandBuilder() {
+    override val name: String = "example"
+
+    init {
+        arguments {
+            "unsigned int" { IntegerArgumentType.integer(0) }
+            "flag" { BoolArgumentType.bool() }
+        }
+
+        executes { source ->
+            val integer = getArg("unsigned int", Int::class)
+            val flag = getArg("flag", Boolean::class)
+            source.sender.sendMessage("Unsinged integer: $integer, flag: $flag")
+            0
+        }
+    }
+}
+
+class ComshopPlugin : JavaPlugin() {
+
+    override fun onEnable() {
+        CommandRegistrar.lifecycleRegister(this)
+        CommandRegistrar.register(ExampleCommand())
+    }
+
+    override fun onDisable() {
+        // Plugin shutdown logic
+    }
+}
+```
+
+# TODO - 앞으로 추가될수도 있는것
 
 * 인수 분기   
     comshop 은 아직 인수 분기를 지원하지 않습니다.
