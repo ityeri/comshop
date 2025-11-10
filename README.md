@@ -249,12 +249,12 @@ class ExampleCommand : LiteralCommandBuilder() {
 
     init {
         ...
-        then { command("wasans") {
+        then(command("wasans")) {
             executes { source ->
                 source.sender.sendMessage("This is wasans command")
                 0
             }
-        }}
+        }
     }
 }
 ```
