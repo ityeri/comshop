@@ -10,9 +10,9 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 abstract class LiteralCommandBuilder() : CommandBuilder {
     abstract val name: String
-    private val arguments: MutableList<ArgumentData<*>> = mutableListOf()
-    private val subCommands: MutableList<CommandBuilder> = mutableListOf()
-    private var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
+    protected val arguments: MutableList<ArgumentData<*>> = mutableListOf()
+    protected val subCommands: MutableList<CommandBuilder> = mutableListOf()
+    protected var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
         { source -> 1 }
     private var permissionChecker: (source: CommandSourceStack) -> Boolean = { true }
 
