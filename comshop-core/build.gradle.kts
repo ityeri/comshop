@@ -1,28 +1,5 @@
 plugins {
     kotlin("jvm") version "2.2.0"
-    `maven-publish`
-}
-
-group = "io.github.ityeri"
-version = "v1.0.0-beta"
-base.archivesName.set("comshop-core")
-
-publishing {
-    publications {
-        create<MavenPublication>("gpr") {
-            artifactId = "comshop-core"
-        }
-    }
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/ityeri/comshop")
-            credentials {
-                username = findProperty("gpr.user") as String? ?: ""
-                password = findProperty("gpr.key") as String? ?: ""
-            }
-        }
-    }
 }
 
 repositories {
