@@ -6,3 +6,8 @@ plugins {
 repositories {
     mavenCentral()
 }
+
+allprojects {
+    group = "com.github.ityeri.comshop"
+    version = "v1.0.0-beta"
+}
