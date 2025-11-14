@@ -3,9 +3,6 @@ plugins {
     `maven-publish`
 }
 
-apply(plugin = "java")
-apply(plugin = "maven-publish")
-
 java {
     withSourcesJar()
     withJavadocJar()
