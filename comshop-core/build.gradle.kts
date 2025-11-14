@@ -1,5 +1,22 @@
 plugins {
     kotlin("jvm") version "2.2.0"
+    `maven-publish`
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("jitpack") {
+            groupId = project.group as String
+            artifactId = project.name
+            version = project.version as String
+            from(components["java"])
+        }
+    }
 }
 
 repositories {
