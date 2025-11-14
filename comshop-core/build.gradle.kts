@@ -2,6 +2,25 @@ plugins {
     kotlin("jvm") version "2.2.0"
 }
 
+apply(plugin = "java")
+apply(plugin = "maven-publish")
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("jitpack") {
+            groupId = project.group as String
+            artifactId = project.name
+            version = project.version as String
+            from(components["java"])
+        }
+    }
+}
+
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/") {
