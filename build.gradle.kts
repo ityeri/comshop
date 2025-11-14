@@ -8,5 +8,5 @@ repositories {
 
 subprojects {
     project.group = "com.github.ityeri.comshop"
-    project.version = "v1.0.0-beta"
+    project.version = "v1.0.0-beta.2"
 }
