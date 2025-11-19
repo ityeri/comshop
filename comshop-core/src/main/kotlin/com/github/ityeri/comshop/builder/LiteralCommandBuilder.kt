@@ -6,6 +6,7 @@ import com.github.ityeri.comshop.ContextWrapper
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
+import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
 abstract class LiteralCommandBuilder() : CommandBuilder {
@@ -43,31 +44,36 @@ abstract class LiteralCommandBuilder() : CommandBuilder {
             rootBuilder.then(subCommand.createBuilder())
         }
 
+        val executeBlock: (CommandContext<CommandSourceStack>) -> Int = { context ->
+            ContextWrapper(context).run { executor(context.source) }
+        }
+
         // TODO 아무리 봐도 이 코드는 좀 아닌것 같음 아니다 꽤 괜찮을지도
         if (arguments.isEmpty()) {
-            rootBuilder.executes { context ->
-                ContextWrapper(context).run { executor(context.source) }
-            }
+            rootBuilder.executes(executeBlock)
 
         } else {
-            var previousBuilder: ArgumentBuilder<CommandSourceStack, *>? = null
-            var currentBuilder: ArgumentBuilder<CommandSourceStack, *>? = null
-
-            for (argumentData in arguments.reversed()) {
-                currentBuilder = argumentData.createBuilder<CommandSourceStack>()
-
-                if (previousBuilder == null) {
-                    previousBuilder = currentBuilder.executes { context ->
-                        ContextWrapper(context).run { executor(context.source) }
-                    }
-                } else {
-                    previousBuilder = currentBuilder.then(previousBuilder)
-                }
-            }
-
-            rootBuilder.then(currentBuilder!!)
+            val argumentBuilders: List<ArgumentBuilder<CommandSourceStack, *>> =
+                arguments.map { it.createBuilder() }
+            rootBuilder.then(
+                connectArgumentBuilders(argumentBuilders, executeBlock)
+            )
         }
 
         return rootBuilder
     }
+}
+
+fun <S> connectArgumentBuilders(
+    builders: List<ArgumentBuilder<S, *>>, executeBlock: (CommandContext<S>) -> Int
+): ArgumentBuilder<S, *> {
+    if (builders.size == 1) {
+        return builders[0].executes(executeBlock)
+    }
+
+    return builders[0].then(
+        connectArgumentBuilders(
+            builders.subList(1, builders.size), executeBlock
+        )
+    )
 }
