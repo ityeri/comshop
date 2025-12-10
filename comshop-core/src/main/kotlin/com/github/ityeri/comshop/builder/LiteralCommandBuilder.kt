@@ -1,6 +1,6 @@
 package com.github.ityeri.comshop.builder
 
-import com.github.ityeri.comshop.ArgumentData
+import com.github.ityeri.comshop.argument.SingleArgumentData
 import com.github.ityeri.comshop.ArgumentRegistrar
 import com.github.ityeri.comshop.ContextWrapper
 import com.mojang.brigadier.builder.ArgumentBuilder
@@ -11,7 +11,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 abstract class LiteralCommandBuilder() : CommandBuilder {
     abstract val name: String
-    protected val arguments: MutableList<ArgumentData<*>> = mutableListOf()
+    protected val arguments: MutableList<SingleArgumentData<*>> = mutableListOf()
     protected val subCommands: MutableList<CommandBuilder> = mutableListOf()
     protected var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
         { source -> 1 }
