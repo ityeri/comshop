@@ -1,6 +1,6 @@
 package com.github.ityeri.comshop
 
-import com.github.ityeri.comshop.builder.CommandBuilder
+import com.github.ityeri.comshop.dsl.CommandBuilder
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import org.bukkit.plugin.java.JavaPlugin
 

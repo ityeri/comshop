@@ -1,8 +1,9 @@
-package com.github.ityeri.comshop.builder
+package com.github.ityeri.comshop.dsl
 
-import com.github.ityeri.comshop.argument.SingleArgumentNode
-import com.github.ityeri.comshop.ArgumentRegistrar
+import com.github.ityeri.comshop.ArgumentDSL
 import com.github.ityeri.comshop.ContextWrapper
+import com.github.ityeri.comshop.argument.ArgumentChainNode
+import com.github.ityeri.comshop.argument.ArgumentNode
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
@@ -11,7 +12,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 abstract class LiteralCommandBuilder() : CommandBuilder {
     abstract val name: String
-    protected val arguments: MutableList<SingleArgumentNode<*>> = mutableListOf()
+    protected val rootArgumentNode: ArgumentChainNode = ArgumentChainNode()
     protected val subCommands: MutableList<CommandBuilder> = mutableListOf()
     protected var executor: ContextWrapper<CommandSourceStack>.(CommandSourceStack) -> Int =
         { source -> 1 }
@@ -21,8 +22,9 @@ abstract class LiteralCommandBuilder() : CommandBuilder {
         permissionChecker = block
     }
 
-    fun arguments(block: ArgumentRegistrar.() -> Unit) {
-        ArgumentRegistrar(arguments).apply(block)
+    fun arguments(block: ArgumentDSL.() -> Unit) {
+        val argumentRegistrar = ArgumentDSL(rootArgumentNode)
+        argumentRegistrar.apply(block)
     }
 
     fun executes(block: ContextWrapper<CommandSourceStack>.(source: CommandSourceStack) -> Int) {
@@ -53,27 +55,25 @@ abstract class LiteralCommandBuilder() : CommandBuilder {
             rootBuilder.executes(executeBlock)
 
         } else {
-            val argumentBuilders: List<ArgumentBuilder<CommandSourceStack, *>> =
-                arguments.map { it.createBuilder() }
-            rootBuilder.then(
-                connectArgumentBuilders(argumentBuilders, executeBlock)
-            )
+            for (builder in buildArgumentNodes<CommandSourceStack>(TODO(), executeBlock)) {
+                rootBuilder.then(builder)
+            }
         }
 
         return rootBuilder
     }
 }
 
-fun <S> connectArgumentBuilders(
-    builders: List<ArgumentBuilder<S, *>>, executeBlock: (CommandContext<S>) -> Int
-): ArgumentBuilder<S, *> {
-    if (builders.size == 1) {
-        return builders[0].executes(executeBlock)
-    }
 
-    return builders[0].then(
-        connectArgumentBuilders(
-            builders.subList(1, builders.size), executeBlock
+fun <S> buildArgumentNodes(
+    nodes: List<ArgumentNode>, executeBlock: (CommandContext<S>) -> Int
+): List<ArgumentBuilder<S, *>> {
+    if (nodes.size == 1) {
+        return nodes[0].connectExecuteBlock(executeBlock)
+    }
+    else {
+        return nodes[0].connectArgumentBuilder(
+            buildArgumentNodes(nodes.subList(1, nodes.size - 1), executeBlock)
         )
-    )
+    }
 }

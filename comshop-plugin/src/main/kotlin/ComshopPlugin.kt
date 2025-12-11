@@ -1,4 +1,4 @@
-import com.github.ityeri.comshop.builder.CommandDSL.Companion.command
+import com.github.ityeri.comshop.dsl.CommandDSL.Companion.command
 import com.github.ityeri.comshop.CommandRegistrar
 import com.mojang.brigadier.arguments.StringArgumentType
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes

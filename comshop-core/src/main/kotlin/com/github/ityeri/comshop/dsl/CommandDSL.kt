@@ -1,4 +1,4 @@
-package com.github.ityeri.comshop.builder
+package com.github.ityeri.comshop.dsl
 
 class CommandDSL(override val name: String) : LiteralCommandBuilder() {
     companion object {

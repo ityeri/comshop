@@ -1,4 +1,4 @@
-import com.github.ityeri.comshop.builder.LiteralCommandBuilder
+import com.github.ityeri.comshop.dsl.LiteralCommandBuilder
 import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.IntegerArgumentType
 
