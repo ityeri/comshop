@@ -1,6 +1,5 @@
 package com.github.ityeri.comshop.dsl
 
-import com.github.ityeri.comshop.ArgumentDSL
 import com.github.ityeri.comshop.ContextWrapper
 import com.github.ityeri.comshop.argument.ArgumentChainNode
 import com.github.ityeri.comshop.argument.ArgumentNode
@@ -22,8 +21,8 @@ abstract class LiteralCommandBuilder() : CommandBuilder {
         permissionChecker = block
     }
 
-    fun arguments(block: ArgumentDSL.() -> Unit) {
-        val argumentRegistrar = ArgumentDSL(rootArgumentNode)
+    fun arguments(block: ArgumentChainDSL.() -> Unit) {
+        val argumentRegistrar = ArgumentChainDSL(rootArgumentNode)
         argumentRegistrar.apply(block)
     }
 
