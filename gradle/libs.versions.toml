@@ -10,7 +10,7 @@ kotlinxCoroutines = "1.9.0"
 # this version is a intergreted paper api version
 # paper dependency includes brigadier
 # actual paper version is specified at comshop-impl level
-paperGlobal = "1.20.6-R0.1-SNAPSHOT"
+paperGlobal = "1.21.4-R0.1-SNAPSHOT"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

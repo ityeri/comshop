@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
     api(libs.paperGlobal)
+    compileOnly(libs.paperGlobal)
 }
