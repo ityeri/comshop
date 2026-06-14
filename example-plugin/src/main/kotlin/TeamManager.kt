@@ -6,14 +6,13 @@ import com.github.ityeri.comshop.api.argument.StringType
 import com.github.ityeri.comshop.api.argument.SuggestionElement
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.command
-import com.mojang.brigadier.arguments.StringArgumentType
 import io.papermc.paper.command.brigadier.CommandSourceStack
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
 
+
+val mm = MiniMessage.miniMessage()
 
 object TeamManager {
     val teams: MutableList<Team> = mutableListOf(
@@ -61,18 +60,15 @@ val teamCommand = command("myteam") {
     executes {
         val team = "team" to Team::class
 
+        val teamColorHex = team.color.asHexString()
+
         sender.sendMessage(
-            Component.text("Information about the team \"")
-                .append(
-                    Component.text(
-                        team.name,
-                        TextColor.fromHexString(team.color.asHexString())
-                    )
-                )
-                .append(Component.text("\": "))
+            mm.deserialize(
+                "Information about the team \"<$teamColorHex>${team.name}</$teamColorHex>\": "
+            )
         )
         sender.sendMessage(
-            Component.text("| ${team.members.size} players are joined to this team")
+            mm.deserialize("| ${team.members.size} players are joined to this team")
         )
 
         CommandResult.SUCCESS
@@ -89,7 +85,7 @@ val teamCommand = command("myteam") {
 
             if (existsTeam != null) {
                 sender.sendMessage(
-                    Component.text("Team is already exists", TextColor.color(1f, 0f, 0f))
+                    mm.deserialize("<red>Team already exsists</red>")
                 )
                 return@executes CommandResult.FAILED
             }
@@ -102,15 +98,12 @@ val teamCommand = command("myteam") {
 
             TeamManager.teams.add(newTeam)
 
+            val teamColorHex = newTeam.color.asHexString()
+
             sender.sendMessage(
-                Component.text("Team \"")
-                    .append(
-                        Component.text(
-                            newTeam.name,
-                            TextColor.fromHexString(newTeam.color.asHexString())
-                        )
-                    )
-                    .append(Component.text("\" is added"))
+                mm.deserialize(
+                    "Team \"<$teamColorHex>${newTeam.name}</$teamColorHex>\" is added"
+                )
             )
 
             CommandResult.SUCCESS
@@ -129,22 +122,14 @@ val teamCommand = command("myteam") {
 
             team.members.add(player)
 
-            sender.sendMessage(
-                Component.text("Player \"")
-                    .append(
-                        Component.text(player.name)
-                            .decorate(TextDecoration.BOLD)
-                    )
-                    .append(Component.text("\" is added to team \""))
-                    .append(
-                        Component.text(
-                            team.name,
-                            TextColor.fromHexString(team.color.asHexString())
-                        )
-                    )
-                    .append(Component.text("\""))
-            )
+            val teamColorHex = team.color.asHexString()
 
+            sender.sendMessage(
+                mm.deserialize(
+                    "Player \"<bold>${player.name}</bold>\" is added to team "
+                            + "\"<$teamColorHex>${team.name}</$teamColorHex>\""
+                )
+            )
             CommandResult.SUCCESS
         }
     }
