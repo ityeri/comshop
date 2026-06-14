@@ -10,6 +10,8 @@ class ComshopExamplePlugin : JavaPlugin() {
     override fun onEnable() {
         initComshop(this)
 
+        register(teamCommand)
+
         register("mytp") {
             requires { sender.isOp }
 
