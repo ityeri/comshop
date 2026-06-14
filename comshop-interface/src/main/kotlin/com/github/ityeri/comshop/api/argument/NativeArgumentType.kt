@@ -2,6 +2,7 @@ package com.github.ityeri.comshop.api.argument
 
 import com.destroystokyo.paper.profile.PlayerProfile
 import com.google.common.collect.Range
+import io.papermc.paper.command.brigadier.argument.SignedMessageResolver
 import io.papermc.paper.command.brigadier.argument.predicate.ItemStackPredicate
 import io.papermc.paper.entity.LookAnchor
 import io.papermc.paper.math.BlockPosition
@@ -77,7 +78,7 @@ sealed class NativeArgumentType<T : Any> : ComshopArgumentType<T> {
     class NamedColorArgumentType : NativeArgumentType<NamedTextColor>()
     class ComponentArgumentType : NativeArgumentType<Component>()
     class StyleArgumentType : NativeArgumentType<Style>()
-    class SignedMessageArgumentType : NativeArgumentType<SignedMessage>()
+    class SignedMessageArgumentType : NativeArgumentType<SignedMessageResolver>()
 
     class ScoreboardDisplaySlotArgumentType : NativeArgumentType<DisplaySlot>()
     class NamespacedKeyArgumentType : NativeArgumentType<NamespacedKey>()
