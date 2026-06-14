@@ -1,20 +1,11 @@
 import com.github.ityeri.comshop.api.CommandResult
-import com.github.ityeri.comshop.api.CommandWritingContext
-import com.github.ityeri.comshop.api.argument.ComshopCustomArgumentType
-import com.github.ityeri.comshop.api.argument.NativeArgumentType
-import com.github.ityeri.comshop.api.argument.SuggestionElement
-import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.initComshop
 import com.github.ityeri.comshop.register
-import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.java.JavaPlugin
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 
-class ComshopPlugin : JavaPlugin() {
+class ComshopExamplePlugin : JavaPlugin() {
 
     override fun onEnable() {
         initComshop(this)
