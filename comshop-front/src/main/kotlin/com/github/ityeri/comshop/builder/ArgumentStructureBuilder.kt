@@ -68,6 +68,13 @@ sealed interface ArgumentStructureBuilder {
         infix fun <T : Any> String.to(builder: SingleNodeBuilder<T>) {
             subBuilders.add(builder.named(this))
         }
+        infix fun <T : Any> String.to(argumentType: ComshopArgumentType<T>) {
+            subBuilders.add(
+                ArgumentStructureBuilder.SingleNodeBuilder(
+                    this, argumentType
+                )
+            )
+        }
     }
 
     @ComshopDsl
