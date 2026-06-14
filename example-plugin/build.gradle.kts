@@ -2,13 +2,16 @@ plugins {
     alias(libs.plugins.kotlinPluginSerialization)
     kotlin("jvm")
     id("com.gradleup.shadow") version "8.3.0"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
-dependencies {
-    compileOnly(libs.paperGlobal)
+val pluginPaperVersion = "1.21.4"
 
-    runtimeOnly(project(":comshop-impl:1.21.10"))
+dependencies {
+//    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:$pluginPaperVersion-R0.1-SNAPSHOT")
+
+    implementation(project(":comshop-impl:1.21.10"))
     implementation(project(":comshop-front"))
 }
 
@@ -17,7 +20,7 @@ tasks.build {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21.10")
+    minecraftVersion(pluginPaperVersion)
 }
 
 kotlin {
