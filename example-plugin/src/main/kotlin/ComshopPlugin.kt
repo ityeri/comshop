@@ -1,11 +1,10 @@
-import com.github.ityeri.comshop.initComshop
 import com.github.ityeri.comshop.api.CommandResult
 import com.github.ityeri.comshop.api.CommandWritingContext
 import com.github.ityeri.comshop.api.argument.ComshopCustomArgumentType
 import com.github.ityeri.comshop.api.argument.NativeArgumentType
 import com.github.ityeri.comshop.api.argument.SuggestionElement
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
-import com.github.ityeri.comshop.builder.ArgumentStructureBuilder
+import com.github.ityeri.comshop.initComshop
 import com.github.ityeri.comshop.register
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.entity.Entity
@@ -56,31 +55,5 @@ class ComshopPlugin : JavaPlugin() {
     }
 
     override fun onDisable() {
-    }
-}
-
-
-class CustomTimeArgumentType : ComshopCustomArgumentType<LocalDateTime, Int>(NativeArgumentType.IntArgumentType()) {
-    override fun parse(
-        nativeValue: Int,
-        source: CommandSourceStack
-    ): LocalDateTime {
-        if (nativeValue < 0) {
-            throw ComshopCommandException("Time value cannot be a negative value")
-        }
-
-        return LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(nativeValue.toLong() * 1000),
-            ZoneId.systemDefault()
-        )
-    }
-
-    override fun suggest(
-        writingContext: CommandWritingContext,
-        source: CommandSourceStack
-    ): Iterable<SuggestionElement> {
-        return listOf(
-            SuggestionElement((System.currentTimeMillis() / 1000).toInt().toString())
-        )
     }
 }
