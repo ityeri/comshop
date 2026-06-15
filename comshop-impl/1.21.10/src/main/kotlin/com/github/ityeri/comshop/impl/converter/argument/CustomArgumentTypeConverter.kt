@@ -39,7 +39,7 @@ fun <T : Any, N : Any> ComshopCustomArgumentType<T, N>.customTypeToBrigadierArgu
                     }
                     catch (e: CommandSyntaxException) {
                         throw IllegalStateException(
-                            "Method ComshopCustomArgumentType.parse cannot throw CommandSyntaxException, "
+                            "Method ComshopCustomArgumentType.parse should not throw CommandSyntaxException, "
                                     + "which belongs to brigadier. Use ComshopCommandException instead",
                             e
                         )
