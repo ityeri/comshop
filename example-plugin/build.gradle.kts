@@ -25,3 +25,4 @@ tasks.runServer {
 kotlin {
     jvmToolchain(25)
 }
+
