@@ -1,4 +1,4 @@
-package com.github.ityeri.comshop.impl.converter.argument.nativ
+package com.github.ityeri.comshop.impl.converter.argument
 
 import com.destroystokyo.paper.profile.PlayerProfile
 import com.github.ityeri.comshop.api.argument.NativeArgumentType

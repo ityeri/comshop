@@ -1,4 +1,4 @@
-package com.github.ityeri.comshop.impl.converter.argument.nativ
+package com.github.ityeri.comshop.impl.converter.argument
 
 import com.mojang.brigadier.arguments.ArgumentType
 import io.papermc.paper.command.brigadier.CommandSourceStack
