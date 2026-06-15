@@ -13,7 +13,7 @@ fun <T : Any> ComshopArgumentType<T>.toBrigadierArgumentType(): ArgumentType<T> 
             this.nativeToBrigadierArgumentType()
         }
         is ComshopCustomArgumentType<T, *> -> {
-            this.toBrigadierArgumentType()
+            this.customTypeToBrigadierArgumentType()
         }
         else -> {
             throw IllegalArgumentException("Unexpected ComshopArgumentTypes's subtype was passed")
