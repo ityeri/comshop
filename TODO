@@ -1,6 +1,3 @@
-version compatibility checking is already done.
-now commit build scripts
-and distribution settings
+distribution setting
 
-
-think about each exception processing for argument parsing, command executing
+completable future support (async support)
