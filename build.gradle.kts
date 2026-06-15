@@ -31,12 +31,14 @@ subprojects {
 
     plugins.apply("maven-publish")
 
-    configure<PublishingExtension> {
-        publications {
-            create<MavenPublication>("mavenJava") {
-                if (path.startsWith(":comshop-impl")) {
-                    val mcVersionName = path.split(":").last()
-                    artifactId = "comshop-impl-$mcVersionName"
+    afterEvaluate {
+        configure<PublishingExtension> {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    if (path.startsWith(":comshop-impl")) {
+                        val mcVersionName = path.split(":").last()
+                        artifactId = "comshop-impl-$mcVersionName"
+                    }
                 }
             }
         }
