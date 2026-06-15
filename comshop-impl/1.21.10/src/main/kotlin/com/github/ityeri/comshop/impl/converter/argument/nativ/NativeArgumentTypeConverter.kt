@@ -16,7 +16,7 @@ import org.bukkit.entity.Player
 
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> NativeArgumentType<T>.nativeToBrigadierArgumentType(): ArgumentType<T> =
+fun <T : Any> NativeArgumentType<T>.nativeTypeToBrigadierArgumentType(): ArgumentType<T> =
     when (this) {
         is NativeArgumentType.BooleanArgumentType -> {
             BoolArgumentType.bool()
