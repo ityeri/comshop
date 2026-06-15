@@ -1,12 +1,15 @@
 package com.github.ityeri.comshop.impl.converter
 
 import com.github.ityeri.comshop.api.ComshopContext
+import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.impl.CommandFragment
 import com.github.ityeri.comshop.impl.BrigadierNodeBuilder
 import com.github.ityeri.comshop.impl.converter.argument.toBrigadierArgumentType
 import com.github.ityeri.comshop.impl.optic.nodePTraversal
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
+import com.mojang.brigadier.exceptions.CommandSyntaxException
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 
 
 fun toCommandFragmentNode(node: Node<ComshopCommandNode>): Node<CommandFragment> =
@@ -40,16 +43,28 @@ fun toCommandFragment(commandNode: ComshopCommandNode): CommandFragment =
             )
         }
         is ComshopCommandNode.ExecutionNode -> {
-            CommandFragment.ExecutionFragment { ctx ->
-                 commandNode.commandBlock(
-                    object : ComshopContext {
-                        override val source = ctx.source
+            CommandFragment.ExecutionFragment { context ->
+                val comshopContext = object : ComshopContext {
+                    override val source = context.source
 
-                        override fun <T> getArgument(name: String, clazz: Class<T>): T {
-                            return ctx.getArgument(name, clazz)
-                        }
+                    override fun <T> getArgument(name: String, clazz: Class<T>): T {
+                        return context.getArgument(name, clazz)
                     }
-                ).toInt()
+                }
+
+                try {
+                    commandNode.commandBlock(comshopContext).toInt()
+                }
+                catch (e: ComshopCommandException) {
+                    throw SimpleCommandExceptionType({ e.message }).create()
+                }
+                catch (e: CommandSyntaxException) {
+                    throw IllegalStateException(
+                        "Command execution block defined in comshop should not throw CommandSyntaxException, "
+                                + "which belongs to brigadier. Use ComshopCommandException instead",
+                        e
+                    )
+                }
             }
         }
     }
