@@ -35,6 +35,10 @@ subprojects {
         configure<PublishingExtension> {
             publications {
                 create<MavenPublication>("mavenJava") {
+                    components.findByName("java")?.let {
+                        from(it)
+                    }
+
                     if (path.startsWith(":comshop-impl")) {
                         val mcVersionName = path.split(":").last()
                         artifactId = "comshop-impl-$mcVersionName"
