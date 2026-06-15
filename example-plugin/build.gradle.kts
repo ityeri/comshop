@@ -25,28 +25,3 @@ tasks.runServer {
 kotlin {
     jvmToolchain(25)
 }
-
-//tasks.jar {
-//    manifest {
-//        attributes["Implementation-Version"] = version
-//    }
-//    from(
-//        configurations.compileClasspath.get().filter {
-//            it.name.endsWith("kotlin-stdlib.jar")
-//        }.map {
-//            if (it.isDirectory) it else zipTree(it)
-//        }
-//    )
-//
-//    // To avoid the duplicate handling strategy error
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//
-//    // To add all of the dependencies
-//    from(sourceSets.main.get().output)
-//
-//    dependsOn(configurations.runtimeClasspath)
-//    from({
-//        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-//    })
-//
-//}
