@@ -16,4 +16,14 @@ class CommandExecutionContext(val context: ComshopContext) : SourceContext(conte
         } catch (_: IllegalArgumentException) {
             null
         }
+
+    inline fun <reified T> get(name: String): T =
+        context.getArgument(name, T::class.java)
+
+    inline fun <reified T> getOrNull(name: String): T? =
+        try {
+            context.getArgument(name, T::class.java)
+        } catch (_: IllegalArgumentException) {
+            null
+        }
 }

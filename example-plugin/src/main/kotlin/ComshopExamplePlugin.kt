@@ -1,6 +1,7 @@
 import com.github.ityeri.comshop.api.CommandResult
 import com.github.ityeri.comshop.initComshop
 import com.github.ityeri.comshop.register
+import org.bukkit.Location
 import org.bukkit.entity.Entity
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -41,6 +42,24 @@ class ComshopExamplePlugin : JavaPlugin() {
                 val destination = to ?: target
 
                 from.teleport(destination.location)
+
+                CommandResult.SUCCESS
+            }
+        }
+
+        register("sendtozero") {
+            arguments {
+                "entities" to entities()
+            }
+
+            executes {
+                val entities: List<Entity> = get("entities")
+
+                entities.forEach {
+                    it.teleport(
+                        Location(it.world, 0.0, 0.0, 0.0)
+                    )
+                }
 
                 CommandResult.SUCCESS
             }
