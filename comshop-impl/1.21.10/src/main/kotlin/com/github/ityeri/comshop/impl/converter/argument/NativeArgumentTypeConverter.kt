@@ -41,25 +41,29 @@ fun <T : Any> NativeArgumentType<T>.nativeTypeToBrigadierArgumentType(): Argumen
             }
         }
         is NativeArgumentType.EntityArgumentType -> {
-            CustomNativeArgumentType(ArgumentTypes.entity()) { nativeValue, source ->
+            CustomNativeArgumentType<Entity, EntitySelectorArgumentResolver>(
+                ArgumentTypes.entity()
+            ) { nativeValue, source ->
                 nativeValue.resolve(source).first()
             }
         }
         is NativeArgumentType.EntitiesArgumentType -> {
             CustomNativeArgumentType<List<Entity>, EntitySelectorArgumentResolver>(
-                ArgumentTypes.entity()
+                ArgumentTypes.entities()
             ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
         is NativeArgumentType.PlayerArgumentType -> {
-            CustomNativeArgumentType(ArgumentTypes.player()) { nativeValue, source ->
+            CustomNativeArgumentType<Player, PlayerSelectorArgumentResolver>(
+                ArgumentTypes.player()
+            ) { nativeValue, source ->
                 nativeValue.resolve(source).first()
             }
         }
         is NativeArgumentType.PlayersArgumentType -> {
             CustomNativeArgumentType<List<Player>, PlayerSelectorArgumentResolver>(
-                ArgumentTypes.player()
+                ArgumentTypes.players()
             ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
@@ -77,7 +81,9 @@ fun <T : Any> NativeArgumentType<T>.nativeTypeToBrigadierArgumentType(): Argumen
             }
         }
         is NativeArgumentType.FinePositionArgumentType -> {
-            CustomNativeArgumentType(ArgumentTypes.finePosition(this.centerIntegers)) { nativeValue, source ->
+            CustomNativeArgumentType(
+                ArgumentTypes.finePosition(this.centerIntegers)
+            ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
@@ -105,9 +111,7 @@ fun <T : Any> NativeArgumentType<T>.nativeTypeToBrigadierArgumentType(): Argumen
             ArgumentTypes.style()
         }
         is NativeArgumentType.SignedMessageArgumentType -> {
-            CustomNativeArgumentType(ArgumentTypes.signedMessage()) { nativeValue, source ->
-                nativeValue
-            }
+            ArgumentTypes.signedMessage()
         }
         is NativeArgumentType.ScoreboardDisplaySlotArgumentType -> {
             ArgumentTypes.scoreboardDisplaySlot()
