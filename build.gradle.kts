@@ -39,9 +39,11 @@ subprojects {
                         from(it)
                     }
 
-                    if (path.startsWith(":comshop-impl")) {
+                    artifactId = if (path.startsWith(":comshop-impl")) {
                         val mcVersionName = path.split(":").last()
-                        artifactId = "comshop-impl-$mcVersionName"
+                        "impl-$mcVersionName"
+                    } else {
+                        path.removePrefix(":comshop-")
                     }
                 }
             }
