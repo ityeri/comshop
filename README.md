@@ -1,346 +1,476 @@
-# comshop
+Example of some command that sending given entity to zero coordinate
 
-> [kommand](https://github.com/monun/kommand) 에 영감을 받아 만들어진 
-> [Brigadier](https://github.com/mojang/Brigadier) 의 DSL 래퍼이자 페이퍼용 명령어 라이브러리
+```kotlin
+register("sendtozero") {
+    arguments {
+        "entities" to entities()
+    }
 
-[Brigadier](https://github.com/mojang/Brigadier) 는 모장에서 명령어 파싱을 위해 사용하는 라이브러리이며,
-[kommand](https://github.com/monun/kommand) 는 내부적으로 Brigadier 를 사용합니다.
-때문에 Brigadier 와 kommand 의 명령어 정의는 구조적으로 유사합니다.
+    executes {
+        val entities: List<Entity> = get("entities")
 
-Brigadier
-```java
-literal("test")
-    .then(argument("number", IntegerArgumentType.integer())
-        .then(argument("word", StringArgumentType.word())
-            .then(argument("flag", BoolArgumentType.bool())
-                .executes(context -> {
-                    int number = IntegerArgumentType.getInteger(context, "number");
-                    String word = StringArgumentType.getString(context, "word");
-                    boolean flag = BoolArgumentType.getBool(context, "flag");
-                    return 0;
-                })
+        entities.forEach {
+            it.teleport(
+                Location(it.world, 0.0, 0.0, 0.0)
             )
-        )
-    );
+        }
+
+        CommandResult.SUCCESS
+    }
+}
 ```
 
-kommand
+# comshop
+
+comshop is library for defining Minecraft command using kotlin DSL in Paper API
+
+Supported & tested Paper API versions is below:
+
+| Paper version | Used implementation module | Compatibility   |
+|---------------|----------------------------|-----------------|
+| 1.21.3        | `impl-1.21.10`             | 🔴 Incompatable |
+| 1.21.4        | `impl-1.21.10`             | 🟢 Compatable   |
+| 1.21.10       | `impl-1.21.10`             | 🟢 Compatable   |
+| 26.1.2        | `impl-1.21.10`             | 🟢 Compatable   |
+
+Support for the Paper version under 1.21.4 is planned for the future
+
+# dependencies
+comshop is distributing via JitPack
+
+---
+
+kotlin
+
 ```kotlin
-kommand {
-    register("test") {
-        then("number" to intArgument) {
-            then("word" to word) {
-                then("flag" to bool) {
-                    executes { context ->
-                        val number: Int by context
-                        val word: String by context
-                        val flag: Boolean by context
-                    }
-                }
+repositories {
+    maven { url = uri("https://jitpack.io") }
+}
+```
+
+```kotlin
+dependencies {
+    implementation("com.github.ityeri.comshop:front:v2.0.0")
+    implementation("com.github.ityeri.comshop:impl-1.21.10:v2.0.0")
+}
+```
+
+---
+
+groovy
+
+```groovy
+repositories {
+  maven { url 'https://jitpack.io' }
+}
+```
+
+```groovy
+dependencies {
+  implementation 'com.github.ityeri.comshop:front:v2.0.0'
+  implementation 'com.github.ityeri.comshop:impl-1.21.10:v2.0.0'
+}
+```
+
+> comshop has two parts:
+> * `comshop-front` (`comshop-interface`) : The command definition DSL and structure
+> * `comshop-impl:...` : Actual implementation for register the command defined using comshop to Paper server
+> 
+> More details in **internal & compat** section in below
+
+# usage
+
+## before defining command... `initComshop`
+
+You need to initialize the comshop before Paper plugin loading using `initComshop(plugin: JavaPlugin)`
+
+```kotlin
+import com.github.ityeri.comshop.initComshop
+
+class ComshopExamplePlugin : JavaPlugin() {
+
+    override fun onEnable() {
+        initComshop(this)
+    }
+}
+```
+
+It should be done before plugin enabled
+
+## basic of command DSL
+
+```kotlin
+register("somecommand") {
+    requires { ... }
+    arguments { ... }
+    executes { ... }
+}
+```
+
+The `register` is a top-level function for define and register the command directly. 
+If you want to do only command define, you can use the `command` function like this:
+
+```kotlin
+val someCommand = command("somecommand") { 
+    requires { ... }
+    arguments { ... }
+    executes { ... }
+}
+```
+
+The `command` function does nothing but returns the definition of command
+
+## `requires` block
+The `requires` block is sender requirements defining space. 
+This block should return true or false that represents the sender is qualified to executing command
+
+---
+
+```kotlin
+val someCommand = command("somecommand") {
+    requires { sender.isOp }
+}
+```
+only OPs are allowed
+
+---
+
+```kotlin
+register("somecommand") {
+    requires {
+        when (sender) {
+            is Entity -> {
+                true
+            }
+            else -> {
+                false
             }
         }
     }
 }
 ```
-
-kommand 는 Brigadier 와 비슷하면서도 코틀린 친화적인 형태로 명령어를 정의할수 있습니다.
-하지만 Brigadier 와 비슷하게, 인자가 많아지면서
-코드의 들여쓰기와 길이가 크게 늘어납니다. 
-또한 재귀적인 체인 형태로 명령어 노드가 이어지고 코드가 쓰여지는 kommand 와 Brigadier 의 특성상,
-인자 정의부분, 실행 블록, 하위 명령어 블록을 명확하게 구분하기 어렵습니다
-
-아래는 같은 구조의 명령어를 comshop 을 활용해 작성한 코드입니다
-```kotlin
-command("test") {
-    arguments {
-        "number" to IntegerArgumentType.integer()
-        "word" to StringArgumentType.word()
-        "flag" to BoolArgumentType.bool()
-    }
-
-    executes {
-        val number = "number" to Int::class
-        val word = "word" to String::class
-        val flag = "flag" to Boolean::class
-    }
-}
-```
-
-코드의 들여쓰기가 줄며, 인자를 정의하는 부분과 실행블록이 명확히 구분됩니다.
-하위 명령어는 then() 을 활용해 같은 형태로 정의할수 있습니다
+only entities are allowed
 
 ---
 
-* Supported Paper api versions
-  * 1.21.10 - java 21
+If the `requires` block is not specified, 
+it allows all sender in default (include server console, non-op player and general entity)
 
-* TODO
-  * 1.21.11 - java 21
-  * 아마도 기타 구버전...
+> NOTE : You cannot use the `requires` block more than two. It will be overwritten by the last one
 
-# dependency
-
-comshop 은 JitPack 을 통해 배포됩니다
-
-kotlin
-```kotlin
-repositories {
-    maven("https://jitpack.io") {
-        name = "jitpack"
-    }
-}
-
-dependencies {
-    implementation("com.github.ityeri:comshop:v1.0.0-beta.3")
-}
-```
-
-groovy
-```groovy
-repositories {
-    maven {
-        url "https://jitpack.io"
-        name = "jitpack"
-    }
-}
-
-dependencies {
-    implementation 'com.github.ityeri:comshop:v1.0.0-beta.3'
-}
-```
-
-# usage
-
-## DSL 로 명령어 만들어 보기
+## `arguments` block
+The `arguments` block is argument defining space. 
+You can define arguments using the `to` infix function that pairs string and argument type. 
+Do not confuse with kotlin built-in function `to`!
 
 ```kotlin
-val greetingCommand = command("greeting") {
-    // 명령어를 사용할수 있는 조건을 정의하는 부분
-    requires { source -> source.sender is Player }
-
-    // 명령어의 인자를 정의하는 부분
+register("somecommand") {
     arguments {
-        "player" to ArgumentTypes.player()
-        "message" to StringArgumentType.greedyString()
-    }
-
-    // 명령어의 실행 블럭
-    executes { source, sender ->
-        val senderPlayer = sender as Player
-        val receiverPlayer = "player" to PlayerSelectorArgumentResolver::class resolveFirst source
-        val message = "message" to String::class
-
-        receiverPlayer.sendMessage(message)
-        senderPlayer.sendMessage("Greeting is sent successfully")
+        "boolean" to boolean()
+        "int" to int(-100, 100)
+        "double" to double()
+        "word" to word()
+        "quotedString" to quotedString()
+        "greedyString" to greedyString()
     }
 }
 ```
-| 프로젝트 내부의 예제 `example-plugin/src/main/kotlin/ComshopPlugin.kt` 일부에서 발최
 
-인게임에서:
-```
-/greeting player_name 안녕!
->>> 안녕!
-```
+For example, `"boolean" to boolean()` is means **"I gonna add the argument that named to `boolean` that boolean type!"**
 
-## 하위 명령어 만들기
-
-하나의 명령어가 여러개의 하위 명령어를 가지기도 합니다. 
-마인크래프트의 내장 명령어인 `/team` 명령어를 예시로 들수 있습니다
-
-```
-/team add newTeam
-```
-```
-/team join newTeam player_name
-```
-```
-/team remove newTeam
-```
-
-트리로 그리면 이렇습니다
-
-```
-team
- |--add
- |--join
- \--remove
-```
-
-`then` 매서드를 활용하면 위와 같은 하위 명령어를 정의할수 있습니다
+In the `register` or `command` block, you can use a `arguments` block several times. 
+This allows you to make a number of overloads for the command. 
+Below is example of command overload:
 
 ```kotlin
-val teamCommand = command("myteam") {
-    requires { source -> source.sender.isOp }
-
-    executes { source, sender ->
-        sender.sendMessage("There are ${teams.size} teams:")
-
-        teams.values.forEach { team ->
-            sender.sendMessage(
-                Component.text(" |  ")
-                    .append(Component.text(team.name + "\n", team.color))
-                    .append(Component.text(" |   |  members: "))
-                    .append(Component.text(
-                        team.members.joinToString(", ") { it.name }
-                    ))
-            )
-        }
+register("mytp") {
+    arguments {
+        "target" to entity()
+        "to" to entity()
+    }
+    arguments {
+        "target" to entity()
     }
 
+    executes {
+        val target = "target" to Entity::class
+        val to = "to" toOrNull Entity::class
+
+        ...
+        
+        CommandResult.SUCCESS
+    }
+}
+```
+> Full example is in the `example-plugin/src/main/kotlin/ComshopExamplePlugin.kt`
+
+---
+You can make a argument branching using the `unions`
+
+```kotlin
+register("somecommand") {
+    arguments {
+        "int" to int()
+
+        unions {
+            "boolean" to boolean()
+            "double" to double()
+            
+            arguments {
+                "entity" to entity()
+                "color" to namedColor()
+            }
+        }
+
+        "word" to word()
+    }
+}
+```
+
+You can use the above command like this:
+```
+/somecommand 10 false wasans
+/somecommand 10 3.14 wasans
+
+/somecommand 10 @s red wasans
+```
+
+## `executes` block
+In the executes block, you can define a behavior of command.
+You can get a sender-related value like `sender`, `player` or `entity`;
+and arguments using the `to`, `toOrNull`, `get` or `getOrNull` function in there
+
+(Do not confuse the `to` infix function with kotlin built-in `to` function)
+
+```kotlin
+register("somecommand") {
+    arguments {
+        "someInt" to int()
+    }
+    
+    executes {
+        val sender: CommandSender = sender
+        val player: Player? = player
+        val entity: Entity? = entity
+
+        val intValue: Int = "someInt" to Int::class
+        val nullableInt: Int? = "someInt" toOrNull Int::class
+        
+        val intValue1: Int = get("someInt")
+        val nullableInt1: Int? = getOrNull("someInt")
+        
+        CommandResult.SUCCESS
+    }
+}
+```
+
+---
+
+If the command execution fails for any reason, it should throw a `ComshopCommandException`.
+The exception message will be shown to sender
+
+```kotlin
+import com.github.ityeri.comshop.api.exception.ComshopCommandException
+
+executes {
+    val playerName = "playerName" to String::class
+    
+    if (!playerList.contains(playerName)) {
+        throw ComshopCommandException("Target player does not exist!")
+    }
+}
+```
+
+---
+The `executes` block must returns whether succeeded of the command execution using `CommandResult`.
+It's different from command execution error.
+For example, this Minecraft command is returns a 1 (which is `CommandResult.SUCCESS` in comshop)
+when any villager entities are exists,
+or returns a 0 (which is `CommandResult.FAILED` in comshop) when villager does not exist
+
+```
+/execute as @e[type=minecraft:villager] at @s run kill @s
+```
+
+In brigadier system(which is comshop based on), you can return any integer in execute block,
+but comshop only supports returning 0 or 1 via `CommandResult` for now
+
+## sub commands
+
+You can make a sub commands that works like this:
+
+```
+/myteam new sans-team red
+/myteam join sans-team ityeri
+```
+
+To make a sub command, using the `then` block:
+
+```kotlin
+register("myteam") {
     then("new") {
-        arguments {
-            ...
-        }
-
-        executes {
-            ...
-        }
+        arguments { ... }
+        executes { ... }
     }
-
-    then("add") {
-        arguments {
-            ...
-        }
-
-        executes {
-            ...
-        }
+    then("join") {
+        arguments { ... }
+        executes { ... }
     }
 }
 ```
-| 프로젝트 내부의 예제 `example-plugin/src/main/kotlin/TeamCommand.kt` 일부에서 발최
+> Full example is in the `example-plugin/src/main/kotlin/TeamManager.kt`
 
-`then` 블럭은 `command` DSL 과 동일하게 작성할수 있습니다.
+You can write a `then` block same as the `register` and `command` block.
+Also, that means you can make a sub command of sub command
 
-코드가 너무 길어진다면 이렇게 분리할수도 있습니다:
+## custom suggestions
+
+You can customize the suggestion like this:
 
 ```kotlin
-val newCommand = command("new") {
+register("somecommand") {
+    requires { sender.isOp }
+
     arguments {
-        ...
-    }
-
-    executes { 
-        ...
-    }
-}
-
----
-
-val addCommand = command("add") {
-    arguments {
-        ...
-    }
-
-    executes {
-        ...
+        "color" to word()
+            .suggests {
+                suggest("red")
+                suggest("green")
+                suggest("blue")
+                suggest("white")
+            }
     }
 }
+```
 
----
+It will suggest `red`, `green`, etc
 
-val teamCommand = command("myteam") {
-    requires { source -> source.sender.isOp }
+![](./readme_assets/suggestion_demo.png)
 
-    executes { source, sender ->
-        sender.sendMessage("There are ${teams.size} teams:")
+## custom arguments
 
-        teams.values.forEach { team ->
-            sender.sendMessage(
-                Component.text(" |  ")
-                    .append(Component.text(team.name + "\n", team.color))
-                    .append(Component.text(" |   |  members: "))
-                    .append(Component.text(
-                        team.members.joinToString(", ") { it.name }
-                    ))
-            )
+You can make your own custom argument using `ComshopCustomArgumentType`
+
+Below is simple example of fruit argument type:
+
+```kotlin
+enum class Fruit {
+    APPLE,
+    BANANA,
+    JAVASCRIPT,
+    BLUE_BERRY
+}
+
+class FruitArgumentType :
+    ComshopCustomArgumentType<Fruit, String>(NativeArgumentType.StringArgumentType(StringType.WORD)) {
+
+    override fun parse(
+        nativeValue: String,
+        source: CommandSourceStack
+    ): Fruit {
+        try {
+            return Fruit.valueOf(nativeValue.uppercase())
+        } catch (_: IllegalArgumentException) {
+            throw ComshopCommandException("Fruit name is wrong!")
         }
     }
 
-    then(newCommand)
-    then(addCommand)
+    override fun suggest(
+        writingContext: CommandWritingContext,
+        source: CommandSourceStack
+    ): Iterable<SuggestionElement> {
+        return Fruit.entries.filter {
+            val lowercaseFruitName = it.name.lowercase()
+            lowercaseFruitName.startsWith(writingContext.reminingLower)
+        }.map {
+            SuggestionElement(it.name.lowercase())
+        }
+    }
 }
 ```
-| 프로젝트 내부의 예제 `example-plugin/src/main/kotlin/TeamCommand.kt` 일부에서 발최
 
-## 명령어 등록하기
+As you can see, a custom argument type is always based on other `NativeArgumentType`.
+So `ComshopCustomArgumentType` is works like converter.
+When `StringArgumentType` which is the native type of `FruitArgumentType`
+is parsed a word, that value is pass to `FruitArgumentType` and convert into `Fruit` enum by custom logic
 
-명렁어 등록을 위해선 `CommandRegistrar` 를 사용합니다.
-실제로 명령어를 등록할땐, Paper API 의 라이프사이클 API 를 사용합니다
+If the `parsing` method is fails for any, it should throw the exception: `ComshopCommandException`.
+And it's error message will be shown to sender
 
----
+![](./readme_assets/exception_demo.png)
 
-comshop 이 서버의 명렁어 등록 시점에 개입할수 있도록
-서버의 라이프사이클 매니저에 등록합니다.
-
-```kotlin
-CommandRegistrar.lifecycleRegister(plugin) // plugin: JavaPlugin
-```
-
----
-
-명령어를 추가합니다. 
-실제로 명령어가 서버에 추가되는 시점은
-`LifecycleEvents.COMMANDS` 가 트리거 될때입니다.
+When using the `FruitArgumentType`, just doing same as others:
 
 ```kotlin
-CommandRegistrar.register(command) // command: CommandBuilder
+arguments {
+    "fruit" to FruitArgumentType()
+}
 ```
-
-> `lifecycleRegister(plugin)` 와 `register(command)` 를 호출하는 순서는 중요하지 않습니다.
-> 다만 둘다 `LifecycleEvents.COMMANDS` 이전 시점엔 완료 되어 있어야 합니다
-
-## 사용할수 있는 인수 타입들
-
-Brigadier 의 `ArgumentType` 구현체는 모두 가능합니다. 
-
-### Brigadier 내장
-
-`com.mojang.brigadier.arguments` 패키지 내부.
-기초적인 타입들을 파싱하기 위한 인수 타입들이 있습니다
-
-| 이름 | 리턴 타입 | 사용처 |
-|---|---|---|
-| `IntegerArgumentType.integer` | `Int` | 64비트 부호있는 정수 파싱 |
-| `LongArgumentType.longArg` | `Ling` | 64비트 부호있는 정수 파싱 |
-| `FloatArgumentType.floatArg` | `Float` | 32비트 부동소수점 실수 파싱 |
-| `DoubleArgumentType.doubleArg` | `Double` | 64비트 부동소수점 실수 파싱 |
-| `StringArgumentType.word` | `String` | 띄어쓰기 없는 한 단어 파싱 |
-| `StringArgumentType.string` | `String` | 띄어쓰기 가능한 끝따옴표로 묶인 문자열 파싱 |
-| `StringArgumentType.greedyString` | `String` | 띄어쓰기 가능한 큰따옴표로 묶이지 않은 문자열 파싱 (보통 명령어 맨 끝 인수로 옴)
-| `BoolArgumentType.bool` | `Boolean` | `true`, `false` 불리언 파싱 |
-
-### Paper api 측 Brigadier 지원
-
-`io.papermc.paper.command.brigadier.argument` 패키지 내부.
-마인크래프트 고유 타입 파싱을 위한 인수 타입들이 다수 있습니다
-
-페이퍼에서 제공하는 대부분의 인수 타입은 보통 그 타입을 그대로 반환하지 않고,
-`...SelectorArgumentResolver` 라 하는 래퍼에 의해 래핑되어 반환됩니다.
-(예컨대, `ArgumentType.player` 는 `Player` 가 아닌 
-`PlayerSelectorArgumentResolver` 를 반환합니다)
-
-paper api 에서 Brigadier 를 위해 지원하는 타입들은 
-[Paper docs - Development / API / Command API / Arguments](
-https://docs.papermc.io/paper/dev/command-api/arguments/minecraft/
-) 에 정리되어 있습니다
 
 # examples
+You can check more examples in `example-plugin/src/main/kotlin/ComshopExamplePlugin.kt`
 
-전체 예제코드 내지 테스트 코드는 
-라이브러리 소스코드의 `example-plugin` 모듈 내에 포함되어 있습니다
+```kotlin
+register("somecommand") {
+    // Requirements of command sender is defining here
+    requires { sender.isOp }
 
-# TODO - 앞으로 추가될"수도" 있는것
+    // Arguments are defining here
+    arguments {
+        "boolean" to boolean()
+        "int" to int(-100, 100)
+        "double" to double()
+        "word" to word()
+        "quotedString" to quotedString()
+        "greedyString" to greedyString()
+    }
 
-* 인수 분기   
-    comshop 은 아직 인수 분기를 지원하지 않습니다.
+    // The behavior of command is defining here
+    executes {
+        // You can get argument using `to` infix method
+        val booleanValue = "boolean" to Boolean::class
+        // or using `get` method
+        val intValue = get<Int>("int")
+        // this function returns null when the argument name or type does not exist
+        val doubleValue = "double" toOrNull Double::class
 
-* 동적 인수   
-    제대로 테스트 되지 않았습니다. 타 동적 인수 구현이 존재할순 있습니다.
-    길이가 특정되지 않는 명령어의 구현 또한 불문명합니다 
-    (예로, as 와 at 등을 여럿 연결할수 있는 execute 같은 명령어)
+        sender.sendMessage("Boolean is $booleanValue")
+        sender.sendMessage("Integer is $intValue")
+        sender.sendMessage("Double is $doubleValue")
+        sender.sendMessage("Word is ${"int" to String::class}")
+        sender.sendMessage("Quoted string is ${"quotedString" to String::class}")
+        sender.sendMessage("Greedy string is ${"greedyString" to String::class}")
 
-* 인수 타입 커스텀 시스템   
-    현재 브리가디어는 `CustomArgumentType` 을 통해 인수 타입 커스텀을 지원하지만,
-    추후 comshop 의 목적에 맞춰 자체 커스텀 인수가 추가될수 있습니다
+        // You should return whether command is succeeded
+        // More details in below
+        CommandResult.SUCCESS
+    }
+}
+```
+
+# internal & compat
+
+> This part is about the comshop's internal structure
+
+comshop is composed with several core modules for compat of multiple Minecraft versions (Paper api versions):
+
+* `comshop-front` (in artifact, name as `comshop:front`)
+* `comshop-interface` (in artifact, name as `comshop:interface`)
+* `comshop-impl`
+  * `1.21.10` (in artifact, name as `comshop:front`)
+
+---
+
+The `comshop-front` module includes command DSL, and any other top-level functions like `initComshop`.
+You'll maybe use this module finally.
+The `comshop-front` module imports a `AbstractCommandRegistrar`
+that implemented by one of the `comshop-impl` module internally
+
+The `comshop-interface` is unified interface for all Paper api versions.
+It provides a common command define structure and set of native-supported types
+
+The `comshop-impl:<mc version>` is actual implementation of the `comshop-interface`.
+Usually, this module is doing job of 
+convert the comshop command structure into the brigadier node and then register it
+
+Currently, only `comshop-impl:1.21.10` is existing, but it will be added more
