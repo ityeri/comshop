@@ -22,7 +22,8 @@ register("sendtozero") {
 
 # comshop
 
-comshop is library for defining Minecraft command using kotlin DSL in Paper API
+comshop is library for defining Minecraft command using kotlin DSL in Paper API 
+(works on [Brigadier](https://github.com/Mojang/brigadier))
 
 Supported & tested Paper API versions is below:
 
@@ -292,7 +293,7 @@ or returns a 0 (which is `CommandResult.FAILED` in comshop) when villager does n
 /execute as @e[type=minecraft:villager] at @s run kill @s
 ```
 
-In brigadier system(which is comshop based on), you can return any integer in execute block,
+In brigadier system(which is comshop works on), you can return any integer in execute block,
 but comshop only supports returning 0 or 1 via `CommandResult` for now
 
 ## sub commands
