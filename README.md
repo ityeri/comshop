@@ -21,6 +21,10 @@ register("sendtozero") {
 ```
 
 # comshop
+[![](https://jitpack.io/v/ityeri/comshop.svg)](https://jitpack.io/#ityeri/comshop)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
 
 comshop is library for defining Minecraft command using kotlin DSL in Paper API 
 (works on [Brigadier](https://github.com/Mojang/brigadier))
