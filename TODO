@@ -1,3 +1,9 @@
-DOCS (in english)
+* DOCS (in english)
 
-completable future support (async support)
+* more convenient custom argument type define
+
+* custom suggestion support for custom argument type (by flipping order of name and argument?: word() to "word")
+
+* improve ArgumentNodeBuilderFactory. (by flipping order of name and argument?)
+
+* completable future support (async support)
