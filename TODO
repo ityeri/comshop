@@ -1,1 +1,9 @@
-infix 로 인자 정의하는거
+* DOCS (in english)
+
+* more convenient custom argument type define
+
+* custom suggestion support for custom argument type (by flipping order of name and argument?: word() to "word")
+
+* improve ArgumentNodeBuilderFactory. (by flipping order of name and argument?)
+
+* completable future support (async support)
