@@ -411,6 +411,10 @@ arguments {
 }
 ```
 
+> The custom argument feature is not fully completed.
+> It does not support the suggestion custom **in argument block** for now.
+> But a more convenient argument customization and support are planned for the future
+
 # examples
 You can check more examples in `example-plugin/src/main/kotlin/ComshopExamplePlugin.kt`
 
