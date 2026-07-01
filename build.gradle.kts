@@ -22,7 +22,7 @@ allprojects {
     }
 
     project.group = "com.github.ityeri.comshop"
-    project.version = "v1.0.0-beta.3"
+    project.version = "v2.0.0"
 }
 
 subprojects {
