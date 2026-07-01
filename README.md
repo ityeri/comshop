@@ -1,4 +1,4 @@
-Example of some command that sending given entity to zero coordinate
+Example of a command that sends the given entity to the zero coordinate
 
 ```kotlin
 register("sendtozero") {
@@ -25,11 +25,10 @@ register("sendtozero") {
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
+comshop is a library for defining Minecraft commands using Kotlin DSL in Paper API 
+(based on [Brigadier](https://github.com/Mojang/brigadier))
 
-comshop is library for defining Minecraft command using kotlin DSL in Paper API 
-(works on [Brigadier](https://github.com/Mojang/brigadier))
-
-Supported & tested Paper API versions is below:
+Supported & tested Paper API versions are below:
 
 | Paper version | Used implementation module | Compatibility   |
 |---------------|----------------------------|-----------------|
@@ -79,9 +78,9 @@ dependencies {
 
 > comshop has two parts:
 > * `comshop-front` (`comshop-interface`) : The command definition DSL and structure
-> * `comshop-impl:...` : Actual implementation for register the command defined using comshop to Paper server
+> * `comshop-impl:...` : Actual implementation for registering the command defined using comshop to the Paper server
 > 
-> More details in **internal & compat** section in below
+> More details in the **internal & compat** section in below
 
 # usage
 
@@ -100,9 +99,9 @@ class ComshopExamplePlugin : JavaPlugin() {
 }
 ```
 
-It should be done before plugin enabled
+It should be done before the plugin is enabled
 
-## basic of command DSL
+## basics of command DSL
 
 ```kotlin
 register("somecommand") {
@@ -112,8 +111,8 @@ register("somecommand") {
 }
 ```
 
-The `register` is a top-level function for define and register the command directly. 
-If you want to do only command define, you can use the `command` function like this:
+The `register` is a top-level function for defining and registering the command directly. 
+If you want to do only command definition, you can use the `command` function like this:
 
 ```kotlin
 val someCommand = command("somecommand") { 
@@ -126,8 +125,8 @@ val someCommand = command("somecommand") {
 The `command` function does nothing but returns the definition of command
 
 ## `requires` block
-The `requires` block is sender requirements defining space. 
-This block should return true or false that represents the sender is qualified to executing command
+The `requires` block is defines who can use this command.
+This block should return true or false, which represents whether the sender is qualified to execute the command
 
 ---
 
@@ -158,14 +157,14 @@ only entities are allowed
 
 ---
 
-If the `requires` block is not specified, 
-it allows all sender in default (include server console, non-op player and general entity)
+If the `requires` block is not specified,
+it allows all senders in default (including server console, non-op player, and general entity)
 
-> NOTE : You cannot use the `requires` block more than two. It will be overwritten by the last one
+> NOTE : You cannot use the `requires` block more than twice. It will be overwritten by the last one
 
 ## `arguments` block
-The `arguments` block is argument defining space. 
-You can define arguments using the `to` infix function that pairs string and argument type. 
+The arguments block is a space for defining arguments. 
+You can define arguments using the `to` infix function that pairs a string and an argument type. 
 Do not confuse with kotlin built-in function `to`!
 
 ```kotlin
@@ -181,11 +180,11 @@ register("somecommand") {
 }
 ```
 
-For example, `"boolean" to boolean()` is means **"I gonna add the argument that named to `boolean` that boolean type!"**
+For example, `"boolean" to boolean()` is means **"I gonna add the argument that is named to `boolean` as a boolean type!"**
 
-In the `register` or `command` block, you can use a `arguments` block several times. 
+In the `register` or `command` block, you can use an `arguments` block several times. 
 This allows you to make a number of overloads for the command. 
-Below is example of command overload:
+Below is an example of command overload:
 
 ```kotlin
 register("mytp") {
@@ -210,7 +209,7 @@ register("mytp") {
 > Full example is in the `example-plugin/src/main/kotlin/ComshopExamplePlugin.kt`
 
 ---
-You can make a argument branching using the `unions`
+You can make an argument branching using the `unions`
 
 ```kotlin
 register("somecommand") {
@@ -241,9 +240,9 @@ You can use the above command like this:
 ```
 
 ## `executes` block
-In the executes block, you can define a behavior of command.
-You can get a sender-related value like `sender`, `player` or `entity`;
-and arguments using the `to`, `toOrNull`, `get` or `getOrNull` function in there
+In the `executes` block, you can define a behavior of a command.
+You can get a sender-related value like `sender`, `player`, or `entity`;
+and arguments using the `to`, `toOrNull`, `get`, or `getOrNull` function in there
 
 (Do not confuse the `to` infix function with kotlin built-in `to` function)
 
@@ -272,7 +271,7 @@ register("somecommand") {
 ---
 
 If the command execution fails for any reason, it should throw a `ComshopCommandException`.
-The exception message will be shown to sender
+The exception message will be shown to the sender
 
 ```kotlin
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
@@ -287,29 +286,29 @@ executes {
 ```
 
 ---
-The `executes` block must returns whether succeeded of the command execution using `CommandResult`.
-It's different from command execution error.
-For example, this Minecraft command is returns a 1 (which is `CommandResult.SUCCESS` in comshop)
-when any villager entities are exists,
-or returns a 0 (which is `CommandResult.FAILED` in comshop) when villager does not exist
+The `executes` block must return whether the command execution succeeded using `CommandResult`.
+It's different from a command execution error.
+For example, this Minecraft command returns a 1 (which is `CommandResult.SUCCESS` in comshop)
+when any villager entities exist,
+or returns a 0 (which is `CommandResult.FAILED` in comshop) when the villager does not exist
 
 ```
 /execute as @e[type=minecraft:villager] at @s run kill @s
 ```
 
-In brigadier system(which is comshop works on), you can return any integer in execute block,
-but comshop only supports returning 0 or 1 via `CommandResult` for now
+In brigadier system(which is comshop based on), you can return any integer in the `executes` block,
+But comshop only supports returning 0 or 1 via `CommandResult` for now
 
-## sub commands
+## subcommands
 
-You can make a sub commands that works like this:
+You can make a subcommand that works like this:
 
 ```
 /myteam new sans-team red
 /myteam join sans-team ityeri
 ```
 
-To make a sub command, using the `then` block:
+To make a subcommand, using the `then` block:
 
 ```kotlin
 register("myteam") {
@@ -325,8 +324,8 @@ register("myteam") {
 ```
 > Full example is in the `example-plugin/src/main/kotlin/TeamManager.kt`
 
-You can write a `then` block same as the `register` and `command` block.
-Also, that means you can make a sub command of sub command
+You can write a `then` block, same as the `register` and `command` block.
+Also, that means you can make a subcommand of a subcommand
 
 ## custom suggestions
 
@@ -356,7 +355,7 @@ It will suggest `red`, `green`, etc
 
 You can make your own custom argument using `ComshopCustomArgumentType`
 
-Below is simple example of fruit argument type:
+Below is a simple example of the fruit argument type:
 
 ```kotlin
 enum class Fruit {
@@ -394,17 +393,17 @@ class FruitArgumentType :
 }
 ```
 
-As you can see, a custom argument type is always based on other `NativeArgumentType`.
-So `ComshopCustomArgumentType` is works like converter.
-When `StringArgumentType` which is the native type of `FruitArgumentType`
-is parsed a word, that value is pass to `FruitArgumentType` and convert into `Fruit` enum by custom logic
+As you can see, a custom argument type is always based on another `NativeArgumentType`.
+So `ComshopCustomArgumentType` works like a converter.
+When `StringArgumentType`, which is the native type of `FruitArgumentType`,
+is parsed as a word, that value is passed to `FruitArgumentType` and converted into the `Fruit` enum by custom logic
 
-If the `parsing` method is fails for any, it should throw the exception: `ComshopCommandException`.
-And it's error message will be shown to sender
+If the `parsing` method fails for any reason, it should throw the exception: `ComshopCommandException`.
+And the error message will be shown to the sender
 
 ![](./readme_assets/exception_demo.png)
 
-When using the `FruitArgumentType`, just doing same as others:
+When using the `FruitArgumentType`, just do the same as others:
 
 ```kotlin
 arguments {
@@ -457,7 +456,7 @@ register("somecommand") {
 
 > This part is about the comshop's internal structure
 
-comshop is composed with several core modules for compat of multiple Minecraft versions (Paper api versions):
+comshop is composed of several core modules for compat of multiple Minecraft versions (Paper api versions):
 
 * `comshop-front` (in artifact, name as `comshop:front`)
 * `comshop-interface` (in artifact, name as `comshop:interface`)
@@ -466,16 +465,16 @@ comshop is composed with several core modules for compat of multiple Minecraft v
 
 ---
 
-The `comshop-front` module includes command DSL, and any other top-level functions like `initComshop`.
+The `comshop-front` module includes the command DSL and several top-level functions like `initComshop`.
 You'll maybe use this module finally.
-The `comshop-front` module imports a `AbstractCommandRegistrar`
-that implemented by one of the `comshop-impl` module internally
+Internally, the `comshop-front` module imports an `AbstractCommandRegistrar` 
+that is implemented by one of the `comshop-impl` modules
 
-The `comshop-interface` is unified interface for all Paper api versions.
-It provides a common command define structure and set of native-supported types
+The `comshop-interface` is a unified interface for all Paper api versions.
+It provides a common command definition structure, and a set of native-supported types
 
-The `comshop-impl:<mc version>` is actual implementation of the `comshop-interface`.
-Usually, this module is doing job of 
-convert the comshop command structure into the brigadier node and then register it
+The `comshop-impl:<mc version>` is the actual implementation of the `comshop-interface`.
+Usually, this module does the job of 
+converting the comshop command structure into the brigadier node and then registers it
 
-Currently, only `comshop-impl:1.21.10` is existing, but it will be added more
+Currently, only `comshop-impl:1.21.10` exists, but more will be added
