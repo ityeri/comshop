@@ -8,8 +8,8 @@ import io.papermc.paper.registry.RegistryKey
 open class ArgumentNodeBuilderFactory {
     fun <T : Any> fromNativeType(
         argumentType: NativeArgumentType<T>
-    ): ArgumentStructureBuilder.SingleNodeBuilder<T> =
-        ArgumentStructureBuilder.SingleNodeBuilder(
+    ): ArgumentStructureBuilder.SingleArgumentBuilder<T> =
+        ArgumentStructureBuilder.SingleArgumentBuilder(
             null, argumentType
         )
 
