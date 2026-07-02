@@ -18,7 +18,7 @@ sealed interface ArgumentStructureBuilder {
         val name: String? = null,
         val argumentType: ComshopArgumentType<T>,
         protected val requiresChecker: SourceContext.() -> Boolean = { true },
-        protected val customSuggestionProvider: CustomSuggestionProvider? = null,
+        protected val customSuggestionProvider: SuggestionProvider? = null,
     ) : ArgumentStructureBuilder {
         fun named(name: String): SingleArgumentBuilder<T> =
             SingleArgumentBuilder(
