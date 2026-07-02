@@ -8,8 +8,6 @@ import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
 
 
-typealias CustomSuggestionProvider = SuggestionBuilder.() -> Unit
-
 @ComshopDsl
 sealed interface ArgumentStructureBuilder {
     fun build(): Node<AnyArgumentNode>
