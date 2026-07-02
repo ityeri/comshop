@@ -68,7 +68,7 @@ sealed interface ArgumentStructureBuilder {
         val <T : Any> ComshopArgumentType<T>.asArg: SingleArgumentBuilder<T>
             get() = SingleArgumentBuilder(argumentType = this)
 
-        infix fun <T : Any> String.to(builder: SingleArgumentBuilder<T>) {
+        infix fun <T : Any> String.named(builder: SingleArgumentBuilder<T>) {
             subBuilders.add(builder.named(this))
         }
     }
