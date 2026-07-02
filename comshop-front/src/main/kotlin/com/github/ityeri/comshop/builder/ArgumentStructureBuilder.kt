@@ -72,13 +72,6 @@ sealed interface ArgumentStructureBuilder {
         infix fun <T : Any> String.to(builder: SingleArgumentBuilder<T>) {
             subBuilders.add(builder.named(this))
         }
-        infix fun <T : Any> String.to(argumentType: ComshopArgumentType<T>) {
-            subBuilders.add(
-                ArgumentStructureBuilder.SingleArgumentBuilder(
-                    this, argumentType
-                )
-            )
-        }
     }
 
     @ComshopDsl
