@@ -54,7 +54,7 @@ val teamCommand = command("myteam") {
     requires { sender.isOp }
 
     arguments {
-        "team" to TeamArgumentType()
+        "team" named TeamArgumentType().asArg
     }
 
     executes {
@@ -76,8 +76,8 @@ val teamCommand = command("myteam") {
 
     then("new") {
         arguments {
-            "name" to quotedString()
-            "color" to namedColor()
+            "name" named quotedString().asArg
+            "color" named namedColor().asArg
         }
 
         executes {
@@ -112,8 +112,8 @@ val teamCommand = command("myteam") {
 
     then("join") {
         arguments {
-            "team" to TeamArgumentType()
-            "player" to player()
+            "team" named TeamArgumentType().asArg
+            "player" named player().asArg
         }
 
         executes {

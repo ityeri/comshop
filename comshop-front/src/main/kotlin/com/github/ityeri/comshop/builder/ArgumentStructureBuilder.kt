@@ -16,28 +16,28 @@ sealed interface ArgumentStructureBuilder {
 
 
     @ComshopDsl
-    class SingleNodeBuilder<T : Any>(
+    class SingleArgumentBuilder<T : Any>(
         val name: String? = null,
         val argumentType: ComshopArgumentType<T>,
         protected val requiresChecker: SourceContext.() -> Boolean = { true },
         protected val customSuggestionProvider: CustomSuggestionProvider? = null,
     ) : ArgumentStructureBuilder {
-        fun named(name: String): SingleNodeBuilder<T> =
-            SingleNodeBuilder(
+        fun named(name: String): SingleArgumentBuilder<T> =
+            SingleArgumentBuilder(
                 name,
                 this.argumentType,
                 this.requiresChecker,
                 this.customSuggestionProvider
             )
-        fun requires(requiresChecker: SourceContext.() -> Boolean): SingleNodeBuilder<T> =
-            SingleNodeBuilder(
+        fun requires(requiresChecker: SourceContext.() -> Boolean): SingleArgumentBuilder<T> =
+            SingleArgumentBuilder(
                 this.name,
                 this.argumentType,
                 requiresChecker,
                 this.customSuggestionProvider
             )
-        fun suggests(customSuggestionProvider: SuggestionBuilder.() -> Unit): SingleNodeBuilder<T> =
-            SingleNodeBuilder(
+        fun suggests(customSuggestionProvider: SuggestionBuilder.() -> Unit): SingleArgumentBuilder<T> =
+            SingleArgumentBuilder(
                 this.name,
                 this.argumentType,
                 this.requiresChecker,
@@ -64,16 +64,12 @@ sealed interface ArgumentStructureBuilder {
     @ComshopDsl
     abstract class IterableStructureBuilder(
         protected val subBuilders: MutableList<ArgumentStructureBuilder>
-    ) : ArgumentStructureBuilder, ArgumentNodeBuilderFactory() {
-        infix fun <T : Any> String.to(builder: SingleNodeBuilder<T>) {
+    ) : ArgumentStructureBuilder, NativeArgumentTypeFactory() {
+        val <T : Any> ComshopArgumentType<T>.asArg: SingleArgumentBuilder<T>
+            get() = SingleArgumentBuilder(argumentType = this)
+
+        infix fun <T : Any> String.named(builder: SingleArgumentBuilder<T>) {
             subBuilders.add(builder.named(this))
-        }
-        infix fun <T : Any> String.to(argumentType: ComshopArgumentType<T>) {
-            subBuilders.add(
-                ArgumentStructureBuilder.SingleNodeBuilder(
-                    this, argumentType
-                )
-            )
         }
     }
 
