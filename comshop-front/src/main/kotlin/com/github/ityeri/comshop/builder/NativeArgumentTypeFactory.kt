@@ -5,7 +5,7 @@ import com.github.ityeri.comshop.api.argument.StringType
 import io.papermc.paper.registry.RegistryKey
 
 
-open class ArgumentNodeBuilderFactory {
+open class NativeArgumentTypeFactory {
     // Primitive types
     fun boolean() = NativeArgumentType.BooleanArgumentType()
 
