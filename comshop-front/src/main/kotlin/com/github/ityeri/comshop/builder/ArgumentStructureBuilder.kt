@@ -4,6 +4,7 @@ import com.github.ityeri.comshop.AnyArgumentNode
 import com.github.ityeri.comshop.context.SourceContext
 import com.github.ityeri.comshop.ComshopDsl
 import com.github.ityeri.comshop.api.argument.ComshopArgumentType
+import com.github.ityeri.comshop.api.argument.NativeArgumentType
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
 
@@ -65,6 +66,9 @@ sealed interface ArgumentStructureBuilder {
     abstract class IterableStructureBuilder(
         protected val subBuilders: MutableList<ArgumentStructureBuilder>
     ) : ArgumentStructureBuilder, ArgumentNodeBuilderFactory() {
+        val <T : Any> ComshopArgumentType<T>.asArg: SingleArgumentBuilder<T>
+            get() = SingleArgumentBuilder(argumentType = this)
+
         infix fun <T : Any> String.to(builder: SingleArgumentBuilder<T>) {
             subBuilders.add(builder.named(this))
         }
