@@ -8,8 +8,6 @@ import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
 
 
-typealias CustomSuggestionProvider = SuggestionBuilder.() -> Unit
-
 @ComshopDsl
 sealed interface ArgumentStructureBuilder {
     fun build(): Node<AnyArgumentNode>
@@ -20,7 +18,7 @@ sealed interface ArgumentStructureBuilder {
         val name: String? = null,
         val argumentType: ComshopArgumentType<T>,
         protected val requiresChecker: SourceContext.() -> Boolean = { true },
-        protected val customSuggestionProvider: CustomSuggestionProvider? = null,
+        protected val customSuggestionProvider: SuggestionProvider? = null,
     ) : ArgumentStructureBuilder {
         fun named(name: String): SingleArgumentBuilder<T> =
             SingleArgumentBuilder(
