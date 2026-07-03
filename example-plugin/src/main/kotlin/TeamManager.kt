@@ -1,12 +1,7 @@
 import com.github.ityeri.comshop.api.CommandResult
-import com.github.ityeri.comshop.api.CommandWritingContext
-import com.github.ityeri.comshop.api.argument.ComshopCustomArgumentType
-import com.github.ityeri.comshop.api.argument.NativeArgumentType
-import com.github.ityeri.comshop.api.argument.StringType
-import com.github.ityeri.comshop.api.argument.SuggestionElement
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.command
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import com.github.ityeri.comshop.customArgument
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
@@ -27,21 +22,22 @@ object TeamManager {
         teams.find({ it.name == name })
 }
 
-class TeamArgumentType :
-    ComshopCustomArgumentType<Team, String>(NativeArgumentType.StringArgumentType(StringType.QUOTED)) {
-    override fun parse(
-        nativeValue: String,
-        source: CommandSourceStack
-    ): Team =
-        TeamManager.findByName(nativeValue) ?: throw ComshopCommandException("Team is not found")
+fun TeamArgumentType() = customArgument {
+    native(word())
 
-    override fun suggest(
-        writingContext: CommandWritingContext,
-        source: CommandSourceStack
-    ): Iterable<SuggestionElement> =
-        TeamManager.teams.map {
-            SuggestionElement("\"${it.name}\"")
+    parses { nativeValue, source ->
+        TeamManager.findByName(nativeValue) ?: throw ComshopCommandException("Team is not found")
+    }
+
+    suggests {
+        TeamManager.teams.filter {
+            it.name
+                .removePrefix("\"")
+                .startsWith(context.remining, ignoreCase = true)
+        }.forEach {
+            suggest("\"${it.name}\"")
         }
+    }
 }
 
 data class Team(
