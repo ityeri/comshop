@@ -27,15 +27,27 @@ class CustomArgumentTypeBuilder<T : Any, N : Any> : NativeArgumentTypeFactory() 
     fun build(): ComshopCustomArgumentType<T, N> =
         object : ComshopCustomArgumentType<T, N> {
             override val nativeArgumentType: NativeArgumentType<N> =
-                this@CustomArgumentTypeBuilder.nativeArgumentType!!
+                this@CustomArgumentTypeBuilder.nativeArgumentType ?:
+                throw IllegalStateException(
+                    "You did not specify the nativeArgumentType." +
+                            "Please add the native function in argument definition"
+                )
 
             override fun parse(nativeValue: N, source: CommandSourceStack): T =
-                parser!!.invoke(nativeValue, source)
+                parser?.invoke(nativeValue, source) ?:
+                throw IllegalStateException(
+                    "You did not specify the parses block. Please add the parses block"
+                )
 
             override fun suggest(
                 writingContext: CommandWritingContext,
                 source: CommandSourceStack
             ): Iterable<SuggestionElement> =
-                SuggestionBuilder(source, writingContext).apply(suggestionProvider!!).build()
+                SuggestionBuilder(source, writingContext).apply(
+                    suggestionProvider ?:
+                    throw IllegalStateException(
+                        "You did not specify the suggests block. Please add the suggests block"
+                    )
+                ).build()
         }
 }
