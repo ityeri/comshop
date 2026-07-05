@@ -31,7 +31,7 @@ fun <T : Any, N : Any> customArgument(
     CustomArgumentTypeBuilder<T, N>().apply(block).build()
 
 fun selectArgument(
-    vararg element: String,
+    elements: Iterable<String>,
     stringType: StringType = StringType.WORD,
     ignoreCase: Boolean = true,
     displayOnlyMatches: Boolean = true,
@@ -39,8 +39,6 @@ fun selectArgument(
         throw ComshopCommandException("Value \"${userInput}\" does not exist.")
     }
 ) = customArgument {
-    val elements = element.toList()
-
     native(string(stringType))
 
     parses { nativeValue, source ->
@@ -70,3 +68,19 @@ fun selectArgument(
         }
     }
 }
+
+fun selectArgument(
+    vararg element: String,
+    stringType: StringType = StringType.WORD,
+    ignoreCase: Boolean = true,
+    displayOnlyMatches: Boolean = true,
+    whenException: (String) -> String = { userInput ->
+        throw ComshopCommandException("Value \"${userInput}\" does not exist.")
+    }
+) = selectArgument(
+    elements = element.toList(),
+    stringType = stringType,
+    ignoreCase = ignoreCase,
+    displayOnlyMatches = displayOnlyMatches,
+    whenException = whenException
+)
