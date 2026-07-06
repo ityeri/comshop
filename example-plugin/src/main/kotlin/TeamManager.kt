@@ -3,7 +3,6 @@ import com.github.ityeri.comshop.api.argument.StringType
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.command
 import com.github.ityeri.comshop.customArgument
-import com.github.ityeri.comshop.selectArgument
 import com.github.ityeri.comshop.simpleSuggests
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -31,7 +30,7 @@ fun TeamArgumentType() = customArgument {
     parses { nativeValue, source ->
         println(nativeValue)
         TeamManager.findByName(nativeValue) ?:
-        throw ComshopCommandException("The team name not found")
+        throw ComshopCommandException("The team name was not found")
     }
 
     simpleSuggests(StringType.QUOTED) {
