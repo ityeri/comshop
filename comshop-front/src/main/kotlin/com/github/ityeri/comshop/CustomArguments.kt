@@ -86,10 +86,10 @@ fun <E : Enum<E>> enumArgument(
     clazz: KClass<E>,
     stringType: StringType = StringType.WORD,
     ignoreCase: Boolean = true,
-    suggestLower: Boolean = true,
+    lowercase: Boolean = true,
     suggestOnlyMatches: Boolean = true,
     whenException: (String) -> Enum<E> = { userInput ->
-        throw ComshopCommandException("Value \"${userInput}\" does not exist.")
+        throw ComshopCommandException("Option \"${userInput}\" does not exist.")
     }
 ) = customArgument {
     val elements = clazz.java.enumConstants.toList()
@@ -98,7 +98,11 @@ fun <E : Enum<E>> enumArgument(
 
     parses { nativeValue, source ->
         val foundValue = elements.find {
-            nativeValue.equals(it.name, ignoreCase = ignoreCase)
+            nativeValue.equals(
+                if (lowercase) it.name.lowercase()
+                else it.name,
+                ignoreCase = ignoreCase
+            )
         }
 
         foundValue ?: whenException.invoke(nativeValue)
@@ -109,7 +113,7 @@ fun <E : Enum<E>> enumArgument(
         ignoreCase,
         suggestOnlyMatches
     ) {
-        if (suggestLower) {
+        if (lowercase) {
             elements.map { it.name.lowercase() }
         } else {
             elements.map { it.name }
