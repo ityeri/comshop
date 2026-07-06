@@ -43,7 +43,7 @@ fun selectArgument(
     elements: Iterable<String>,
     stringType: StringType = StringType.WORD,
     ignoreCase: Boolean = true,
-    displayOnlyMatches: Boolean = true,
+    suggestOnlyMatches: Boolean = true,
     whenException: (String) -> String = { userInput ->
         throw ComshopCommandException("Value \"${userInput}\" does not exist.")
     }
@@ -62,7 +62,7 @@ fun selectArgument(
     simpleSuggests(
         stringType,
         ignoreCase,
-        displayOnlyMatches
+        suggestOnlyMatches
     ) { elements }
 }
 
@@ -70,7 +70,7 @@ fun selectArgument(
     vararg element: String,
     stringType: StringType = StringType.WORD,
     ignoreCase: Boolean = true,
-    displayOnlyMatches: Boolean = true,
+    suggestOnlyMatches: Boolean = true,
     whenException: (String) -> String = { userInput ->
         throw ComshopCommandException("Value \"${userInput}\" does not exist.")
     }
@@ -78,6 +78,6 @@ fun selectArgument(
     elements = element.toList(),
     stringType = stringType,
     ignoreCase = ignoreCase,
-    displayOnlyMatches = displayOnlyMatches,
+    suggestOnlyMatches = suggestOnlyMatches,
     whenException = whenException
 )
