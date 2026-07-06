@@ -41,7 +41,7 @@ fun <T : Any, N : Any> CustomArgumentTypeBuilder<T, N>.simpleSuggests(
 }
 
 fun selectArgument(
-    elements: Iterable<String>,
+    elementProvider: () -> Iterable<String>,
     stringType: StringType = StringType.WORD,
     ignoreCase: Boolean = true,
     suggestOnlyMatches: Boolean = true,
@@ -52,6 +52,7 @@ fun selectArgument(
     native(string(stringType))
 
     parses { nativeValue, source ->
+        val elements = elementProvider.invoke()
         val foundValue = elements.find {
             nativeValue.equals(it, ignoreCase = ignoreCase)
         }
@@ -63,8 +64,24 @@ fun selectArgument(
         stringType,
         ignoreCase,
         suggestOnlyMatches
-    ) { elements }
+    ) { elementProvider.invoke() }
 }
+
+fun selectArgument(
+    elements: Iterable<String>,
+    stringType: StringType = StringType.WORD,
+    ignoreCase: Boolean = true,
+    suggestOnlyMatches: Boolean = true,
+    whenException: (String) -> String = { userInput ->
+        throw ComshopCommandException("Value \"${userInput}\" does not exist.")
+    }
+) = selectArgument(
+    elementProvider = { elements },
+    stringType = stringType,
+    ignoreCase = ignoreCase,
+    suggestOnlyMatches = suggestOnlyMatches,
+    whenException = whenException
+)
 
 fun selectArgument(
     vararg element: String,
