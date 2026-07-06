@@ -13,6 +13,9 @@ class ComshopExamplePlugin : JavaPlugin() {
 
         register(teamCommand)
 
+        register(fruitCommand)
+        register(stringFruitCommand)
+
         register("mytp") {
             requires { sender.isOp }
 

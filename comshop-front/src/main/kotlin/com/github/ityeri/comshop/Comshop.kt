@@ -1,6 +1,8 @@
 package com.github.ityeri.comshop
 
 import com.github.ityeri.comshop.api.argument.ComshopCustomArgumentType
+import com.github.ityeri.comshop.api.argument.StringType
+import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.builder.CommandBuilder
 import com.github.ityeri.comshop.builder.CustomArgumentTypeBuilder
 import org.bukkit.plugin.java.JavaPlugin
@@ -22,8 +24,3 @@ fun register(name: String, block: CommandBuilder.() -> Unit) {
 fun register(builder: CommandBuilder) {
     CommandRegistrar.register(builder.build())
 }
-
-fun <T : Any, N : Any> customArgument(
-    block: CustomArgumentTypeBuilder<T, N>.() -> Unit
-): ComshopCustomArgumentType<T, N> =
-    CustomArgumentTypeBuilder<T, N>().apply(block).build()
