@@ -1,7 +1,10 @@
 import com.github.ityeri.comshop.api.CommandResult
+import com.github.ityeri.comshop.api.argument.StringType
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.command
 import com.github.ityeri.comshop.customArgument
+import com.github.ityeri.comshop.selectArgument
+import com.github.ityeri.comshop.simpleSuggests
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
@@ -23,20 +26,16 @@ object TeamManager {
 }
 
 fun TeamArgumentType() = customArgument {
-    native(word())
+    native(quotedString())
 
     parses { nativeValue, source ->
-        TeamManager.findByName(nativeValue) ?: throw ComshopCommandException("Team is not found")
+        println(nativeValue)
+        TeamManager.findByName(nativeValue) ?:
+        throw ComshopCommandException("The team name not found")
     }
 
-    suggests {
-        TeamManager.teams.filter {
-            it.name
-                .removePrefix("\"")
-                .startsWith(context.remining, ignoreCase = true)
-        }.forEach {
-            suggest("\"${it.name}\"")
-        }
+    simpleSuggests(StringType.QUOTED) {
+        TeamManager.teams.map { it.name }
     }
 }
 
