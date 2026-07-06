@@ -51,12 +51,11 @@ fun selectArgument(
     native(string(stringType))
 
     parses { nativeValue, source ->
-        val findValue = (if (ignoreCase) elements.map { it.lowercase() } else elements)
-            .find {
-                (if (ignoreCase) nativeValue.lowercase() else nativeValue) == it
-            }
+        val foundValue = elements.find {
+            nativeValue.equals(it, ignoreCase = ignoreCase)
+        }
 
-        findValue ?: whenException.invoke(nativeValue)
+        foundValue ?: whenException.invoke(nativeValue)
     }
 
     simpleSuggests(
