@@ -81,3 +81,38 @@ fun selectArgument(
     suggestOnlyMatches = suggestOnlyMatches,
     whenException = whenException
 )
+
+fun <E : Enum<E>> enumArgument(
+    clazz: Class<Enum<E>>,
+    stringType: StringType = StringType.WORD,
+    ignoreCase: Boolean,
+    suggestLower: Boolean,
+    suggestOnlyMatches: Boolean = true,
+    whenException: (String) -> Enum<E> = { userInput ->
+        throw ComshopCommandException("Value \"${userInput}\" does not exist.")
+    }
+) = customArgument {
+    val elements = clazz.enumConstants.toList()
+
+    native(string(stringType))
+
+    parses { nativeValue, source ->
+        val foundValue = elements.find {
+            nativeValue.equals(it.name, ignoreCase = ignoreCase)
+        }
+
+        foundValue ?: whenException.invoke(nativeValue)
+    }
+
+    simpleSuggests(
+        stringType,
+        ignoreCase,
+        suggestOnlyMatches
+    ) {
+        if (suggestLower) {
+            elements.map { it.name.lowercase() }
+        } else {
+            elements.map { it.name }
+        }
+    }
+}
