@@ -5,6 +5,7 @@ import com.github.ityeri.comshop.api.argument.StringType
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.builder.CustomArgumentTypeBuilder
 import com.github.ityeri.comshop.builder.SuggestionBuilder
+import kotlin.reflect.KClass
 
 
 fun <T : Any, N : Any> customArgument(
@@ -82,16 +83,16 @@ fun selectArgument(
 )
 
 fun <E : Enum<E>> enumArgument(
-    clazz: Class<Enum<E>>,
+    clazz: KClass<E>,
     stringType: StringType = StringType.WORD,
-    ignoreCase: Boolean,
-    suggestLower: Boolean,
+    ignoreCase: Boolean = true,
+    suggestLower: Boolean = true,
     suggestOnlyMatches: Boolean = true,
     whenException: (String) -> Enum<E> = { userInput ->
         throw ComshopCommandException("Value \"${userInput}\" does not exist.")
     }
 ) = customArgument {
-    val elements = clazz.enumConstants.toList()
+    val elements = clazz.java.enumConstants.toList()
 
     native(string(stringType))
 
