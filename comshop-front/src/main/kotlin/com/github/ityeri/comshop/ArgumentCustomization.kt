@@ -29,8 +29,8 @@ fun <T : Any, N : Any> CustomArgumentTypeBuilder<T, N>.simpleSuggests(
         }
 
         if (displayOnlyMatches) {
-            elements.filter {
-                it.startsWith(context.remining, ignoreCase = ignoreCase)
+            displayingElements.filter {
+                it.trim('"').startsWith(context.remining.trim('"'), ignoreCase = ignoreCase)
             }
         } else {
             displayingElements
