@@ -5,7 +5,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
-val pluginPaperVersion = "26.1.2"
+val pluginPaperVersion = "26.2"
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:$pluginPaperVersion.build.+")
