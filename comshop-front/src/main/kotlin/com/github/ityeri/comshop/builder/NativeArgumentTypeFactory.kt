@@ -21,7 +21,8 @@ open class NativeArgumentTypeFactory {
     fun long(min: Long = Long.MIN_VALUE, max: Long = Long.MAX_VALUE) =
         NativeArgumentType.LongArgumentType(min, max)
 
-    fun string(type: StringType) = NativeArgumentType.StringArgumentType(type)
+    // beeeeeeeecause Some unknown compile bug
+    fun string(type: StringType): NativeArgumentType<String> = NativeArgumentType.StringArgumentType(type)
     fun word() = NativeArgumentType.StringArgumentType(StringType.WORD)
     fun quotedString() = NativeArgumentType.StringArgumentType(StringType.QUOTED)
     fun greedyString() = NativeArgumentType.StringArgumentType(StringType.GREEDY)
