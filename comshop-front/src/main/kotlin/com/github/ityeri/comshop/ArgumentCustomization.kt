@@ -30,7 +30,7 @@ fun <T : Any, N : Any> CustomArgumentTypeBuilder<T, N>.simpleSuggests(
 
         if (displayOnlyMatches) {
             displayingElements.filter {
-                it.trim('"').startsWith(context.remining.trim('"'), ignoreCase = ignoreCase)
+                it.trim('"').startsWith(context.remaining.trim('"'), ignoreCase = ignoreCase)
             }
         } else {
             displayingElements

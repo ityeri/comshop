@@ -1,8 +1,8 @@
 package com.github.ityeri.comshop.api
 
 class CommandWritingContext(val fullInput: String, val start: Int) {
-    val remining: String
+    val remaining: String
         get() = fullInput.substring(start)
-    val reminingLower: String
-        get() = remining.lowercase()
+    val remainingLower: String
+        get() = remaining.lowercase()
 }
