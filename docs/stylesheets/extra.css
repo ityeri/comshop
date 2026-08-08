@@ -15,7 +15,7 @@
 /* Dark scheme (default) */
 [data-md-color-scheme="slate"] {
   /* Background */
-  --md-default-bg-color: #1e1e1e;
+  --md-default-bg-color: #101010;
 
   /* Primary */
   --md-primary-fg-color: #7c4dff;
@@ -29,7 +29,7 @@
   --md-default-bg-color: #ffffff;
 
   /* Primary */
-  --md-primary-fg-color: #3f51b5;
-  --md-primary-fg-color--light: #7986cb;
-  --md-primary-fg-color--dark: #303f9f;
+  --md-primary-fg-color: #7c4dff;
+  --md-primary-fg-color--light: #b388ff;
+  --md-primary-fg-color--dark: #512da8;
 }
