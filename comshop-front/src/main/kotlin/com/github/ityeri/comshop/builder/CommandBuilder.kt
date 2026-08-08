@@ -50,14 +50,22 @@ class CommandBuilder(val name: String) {
             ),
             Node.UnionNode(
                 *subCommandBuilders.map { it.build() }.toTypedArray(),
-                Node.ChainNode(
-                    argumentStructureBuilder.build(),
+                if (argumentStructureBuilder.isEmpty()) {
                     Node.SingleNode(
                         ComshopCommandNode.ExecutionNode(
                             commandBlock = { CommandExecutionContext(it).run(executor) }
                         )
                     )
-                )
+                } else {
+                    Node.ChainNode(
+                        argumentStructureBuilder.build(),
+                        Node.SingleNode(
+                            ComshopCommandNode.ExecutionNode(
+                                commandBlock = { CommandExecutionContext(it).run(executor) }
+                            )
+                        )
+                    )
+                }
             )
         )
 }
