@@ -1,0 +1,35 @@
+/*
+ * comshop docs — theme overrides
+ *
+ * Edit the hex values below to customize the site colors:
+ *   --md-default-bg-color              : page background
+ *   --md-primary-fg-color              : header / top bar (and accents)
+ *   --md-primary-fg-color--light       : lighter variant of the primary color
+ *   --md-primary-fg-color--dark        : darker variant of the primary color
+ *
+ * There are two color schemes:
+ *   slate   : dark scheme (the site default)
+ *   default : light scheme (via the toggle button)
+ */
+
+/* Dark scheme (default) */
+[data-md-color-scheme="slate"] {
+  /* Background */
+  --md-default-bg-color: #1e1e1e;
+
+  /* Primary */
+  --md-primary-fg-color: #7c4dff;
+  --md-primary-fg-color--light: #b388ff;
+  --md-primary-fg-color--dark: #512da8;
+}
+
+/* Light scheme */
+[data-md-color-scheme="default"] {
+  /* Background */
+  --md-default-bg-color: #ffffff;
+
+  /* Primary */
+  --md-primary-fg-color: #3f51b5;
+  --md-primary-fg-color--light: #7986cb;
+  --md-primary-fg-color--dark: #303f9f;
+}
