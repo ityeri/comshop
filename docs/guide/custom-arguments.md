@@ -23,7 +23,7 @@ class FruitArgumentType :
         source: CommandSourceStack
     ): Iterable<SuggestionElement> {
         return Fruit.entries
-            .filter { it.name.lowercase().startsWith(writingContext.reminingLower) }
+            .filter { it.name.lowercase().startsWith(writingContext.remainingLower) }
             .map { SuggestionElement(it.name.lowercase()) }
     }
 }

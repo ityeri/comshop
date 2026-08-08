@@ -47,6 +47,8 @@ ChainNode(
 )
 ```
 
+When a command has no arguments, the default branch is a plain `SingleNode(ExecutionNode)` (no argument `ChainNode` wrapper).
+
 ## Argument types
 
 * `NativeArgumentType<T>` — sealed hierarchy wrapping Brigadier/Paper argument types (40 types)

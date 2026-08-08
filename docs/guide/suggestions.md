@@ -33,8 +33,8 @@ Inside `suggests { }` you have:
 |----------|---------|
 | `fullInput` | The full input string |
 | `start` | Where the current argument starts |
-| `remining` | The remaining (unparsed) input — `fullInput.substring(start)` |
-| `reminingLower` | `remining` in lowercase |
+| `remaining` | The remaining (unparsed) input — `fullInput.substring(start)` |
+| `remainingLower` | `remaining` in lowercase |
 
 A tooltip example:
 
