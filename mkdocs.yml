@@ -26,6 +26,7 @@ theme:
     - content.code.copy
     - search.suggest
     - search.highlight
+  logo: assets/logo.svg
 
 plugins:
   - search
