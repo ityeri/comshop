@@ -35,7 +35,8 @@ fun connectBuilderBoundaries(node: Node<BuilderBoundary>): BuilderBoundary =
 
             BuilderBoundary(
                 boundaries.flatMap { it.entries },
-                boundaries.flatMap { it.exits }
+                boundaries.flatMap { it.exits },
+                pendingCommand = boundaries.singleOrNull { it.pendingCommand != null }?.pendingCommand
             )
         }
         is Node.ChainNode -> {
