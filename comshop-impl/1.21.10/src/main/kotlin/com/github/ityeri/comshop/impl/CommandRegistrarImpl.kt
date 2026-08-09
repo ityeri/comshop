@@ -21,7 +21,11 @@ class CommandRegistrarImpl : AbstractCommandRegistrar {
                 val builderBoundary = toFinalBuilderBoundary(node)
 
                 if (builderBoundary.entries.size != 1) {
-                    throw IllegalArgumentException("??")
+                    throw IllegalStateException(
+                        "The final builder boundary must reduce to exactly one entry (the command's root literal), "
+                                + "but ${builderBoundary.entries.size} entries were found. "
+                                + "This is most likely an internal error in the comshop node conversion pipeline"
+                    )
                 }
 
                 commands.register(
