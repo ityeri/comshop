@@ -89,37 +89,58 @@ interface AbstractCommandRegistrar {
 
 `CommandRegistrarImpl` collects nodes via `register(node)`, then on Paper's `LifecycleEvents.COMMANDS` event converts and registers each one:
 
-1. **toCommandFragmentNode** — maps `Node<ComshopCommandNode>` → `Node<CommandFragment>` using an optics traversal (`nodePTraversal`, built with Arrow Optics `PTraversal`/`PLens` and a custom `Choice3`/`split3` combinator).
-2. **CommandFragment** — intermediate representation:
+1. **toFinalBuilderBoundary** — a single optics traversal (`nodePTraversal`, built with Arrow Optics `PTraversal`/`PLens` and a custom `Choice3`/`split3` combinator) maps every `ComshopCommandNode` in the tree directly to a `BrigadierBuilderBoundary` and connects them, chaining two per-node steps:
 
    ```kotlin
-   sealed class CommandFragment {
-       class NodeBuilderFragment(val builder: BrigadierNodeBuilder) : CommandFragment()
-       class ExecutionFragment(val command: Command<CommandSourceStack>) : CommandFragment()
+   fun toFinalBuilderBoundary(node: Node<ComshopCommandNode>): BrigadierBuilderBoundary =
+       nodePTraversal<ComshopCommandNode, BrigadierBuilderBoundary>()
+           .modify(node) { node ->
+               node
+                   .toBrigadierFragment()
+                   .toBrigadierBuilderBoundary()
+           }
+           .connectBuilderBoundaries()
+   ```
+
+2. **toBrigadierFragment** (BrigadierFragmentGenerator.kt) — per-node intermediate representation:
+
+   ```kotlin
+   sealed class BrigadierFragment {
+       class NodeBuilderFragment(val builder: BrigadierNodeBuilder) : BrigadierFragment()
+       class ExecutionFragment(val command: Command<CommandSourceStack>) : BrigadierFragment()
    }
    ```
 
-3. **connectCommandFragments** — links fragments into a Brigadier tree via `BuilderBoundary`:
+3. **toBrigadierBuilderBoundary** (BrigadierBuilderBoundaryWrapper.kt) — wraps each fragment into a `BrigadierBuilderBoundary`:
 
    ```kotlin
-   class BuilderBoundary(
+   class BrigadierBuilderBoundary(
        val entries: Collection<BrigadierNodeBuilder>,
        val exits: Collection<BrigadierNodeBuilder>,
        val pendingCommand: Command<CommandSourceStack>? = null
    )
    ```
 
-   * `SingleNode` → a boundary with one entry/exit
+   * `NodeBuilderFragment` → a boundary with one entry/exit
+   * `ExecutionFragment` → an empty boundary carrying the command as `pendingCommand`
+
+4. **connectBuilderBoundaries** (BrigadierBuilderBoundaryConnector.kt) — links boundaries into a Brigadier tree:
+
+   * `SingleNode` → its boundary
    * `UnionNode` → boundaries merged by flattening entries/exits, preserving a single pending command (execution) if one is present
-   * `ChainNode` → boundaries connected with `connectNext` (exits of one feed the entries of the next; a trailing `ExecutionFragment` becomes the pending command)
-4. **Argument conversion** — `NativeArgumentType` → Brigadier `ArgumentType` via `nativeTypeToBrigadierArgumentType`. Paper types that resolve lazily (entity selectors, positions, ranges) are wrapped in `CustomNativeArgumentType`, a `CustomArgumentType.Converted` that resolves against the `CommandSourceStack` during parsing.
-5. **Custom arguments** — `ComshopCustomArgumentType` → Paper's `CustomArgumentType` wrapper, delegating parse/suggest to the user's implementation.
-6. **Suggestions** — comshop suggestion lambdas are converted to Brigadier `SuggestionProvider` (`toBrigadierSuggestionProvider`), with tooltips serialized via `MessageComponentSerializer`.
+   * `ChainNode` → boundaries connected with `connectBoundaryChain` / `connectNext` (exits of one feed the entries of the next; a trailing execution becomes the pending command)
+
+   The result must reduce to exactly one entry — the command's root literal — which `CommandRegistrarImpl` verifies before registering.
+
+5. **Argument conversion** — `NativeArgumentType` → Brigadier `ArgumentType` via `nativeTypeToBrigadierArgumentType`. Paper types that resolve lazily (entity selectors, positions, ranges) are wrapped in `CustomNativeArgumentType`, a `CustomArgumentType.Converted` that resolves against the `CommandSourceStack` during parsing.
+6. **Custom arguments** — `ComshopCustomArgumentType` → Paper's `CustomArgumentType` wrapper, delegating parse/suggest to the user's implementation.
+7. **Suggestions** — comshop suggestion lambdas are converted to Brigadier `SuggestionProvider` (`toBrigadierSuggestionProvider`), with tooltips serialized via `MessageComponentSerializer`.
 
 ## Exception mapping
 
 * `ComshopCommandException` (user-facing) → Brigadier `SimpleCommandExceptionType` — the message is shown to the sender
 * `CommandSyntaxException` thrown from user blocks → wrapped in `IllegalStateException` with a warning (it belongs to Brigadier, not comshop)
+* A conversion result that does not reduce to exactly one root literal → `IllegalStateException` (an internal comshop pipeline error)
 
 ## Adding a new Paper version
 

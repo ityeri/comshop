@@ -48,8 +48,8 @@ Implement `AbstractCommandRegistrar` (from `comshop-interface`):
 
 Reuse the conversion pipeline from `comshop-impl/1.21.10`:
 
-* `Node<ComshopCommandNode>` → `Node<CommandFragment>` (optics traversal)
-* `connectCommandFragments` → `BuilderBoundary` → Brigadier `LiteralCommandNode`
+* `toFinalBuilderBoundary` — one optics traversal maps `Node<ComshopCommandNode>` → `BrigadierBuilderBoundary` via `toBrigadierFragment` / `toBrigadierBuilderBoundary` and connects them
+* the final `BrigadierBuilderBoundary` reduces to the Brigadier `LiteralCommandNode` root
 * `nativeTypeToBrigadierArgumentType` — the mapping between comshop's `NativeArgumentType`s and the target version's `ArgumentTypes` is the part most likely to differ between versions, so check each type against the target Paper API
 
 ### 6. Test
