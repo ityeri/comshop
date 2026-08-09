@@ -7,10 +7,10 @@ import com.github.ityeri.comshop.impl.optic.nodePTraversal
 
 
 fun toFinalBuilderBoundary(node: Node<ComshopCommandNode>): BrigadierBuilderBoundary =
-        nodePTraversal<ComshopCommandNode, BrigadierBuilderBoundary>()
-            .modify(node) { node ->
-                node
-                    .toBrigadierFragment()
-                    .wrapBuilderBoundary()
-            }
-            .connectBuilderBoundaries()
+    nodePTraversal<ComshopCommandNode, BrigadierBuilderBoundary>()
+        .modify(node) { node ->
+            node
+                .toBrigadierFragment()
+                .wrapBuilderBoundary()
+        }
+        .connectBuilderBoundaries()
