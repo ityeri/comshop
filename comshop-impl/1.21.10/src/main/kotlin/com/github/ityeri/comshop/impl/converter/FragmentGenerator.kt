@@ -2,24 +2,13 @@ package com.github.ityeri.comshop.impl.converter
 
 import com.github.ityeri.comshop.api.ComshopContext
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
-import com.github.ityeri.comshop.impl.CommandFragment
-import com.github.ityeri.comshop.impl.BrigadierNodeBuilder
-import com.github.ityeri.comshop.impl.converter.argument.toBrigadierArgumentType
-import com.github.ityeri.comshop.impl.optic.nodePTraversal
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
-import com.github.ityeri.comshop.api.node.Node
+import com.github.ityeri.comshop.impl.BrigadierNodeBuilder
+import com.github.ityeri.comshop.impl.CommandFragment
+import com.github.ityeri.comshop.impl.converter.argument.toBrigadierArgumentType
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 
-
-fun toCommandFragmentNode(node: Node<ComshopCommandNode>): Node<CommandFragment> =
-    nodePTraversal<ComshopCommandNode, CommandFragment>()
-        .modify(
-            node,
-            { commandNode ->
-                toCommandFragment(commandNode)
-            }
-        )
 
 fun toCommandFragment(commandNode: ComshopCommandNode): CommandFragment =
     when (commandNode) {
