@@ -110,7 +110,7 @@ interface AbstractCommandRegistrar {
    ```
 
    * `SingleNode` → a boundary with one entry/exit
-   * `UnionNode` → boundaries merged by flattening entries/exits
+   * `UnionNode` → boundaries merged by flattening entries/exits, preserving a single pending command (execution) if one is present
    * `ChainNode` → boundaries connected with `connectNext` (exits of one feed the entries of the next; a trailing `ExecutionFragment` becomes the pending command)
 4. **Argument conversion** — `NativeArgumentType` → Brigadier `ArgumentType` via `nativeTypeToBrigadierArgumentType`. Paper types that resolve lazily (entity selectors, positions, ranges) are wrapped in `CustomNativeArgumentType`, a `CustomArgumentType.Converted` that resolves against the `CommandSourceStack` during parsing.
 5. **Custom arguments** — `ComshopCustomArgumentType` → Paper's `CustomArgumentType` wrapper, delegating parse/suggest to the user's implementation.
