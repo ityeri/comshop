@@ -4,7 +4,7 @@ import com.github.ityeri.comshop.impl.BrigadierBuilderBoundary
 import com.github.ityeri.comshop.impl.BrigadierFragment
 
 
-fun BrigadierFragment.wrapBuilderBoundary(): BrigadierBuilderBoundary =
+fun BrigadierFragment.toBrigadierBuilderBoundary(): BrigadierBuilderBoundary =
     when (this) {
         is BrigadierFragment.NodeBuilderFragment -> {
             BrigadierBuilderBoundary(listOf(builder), listOf(builder))

@@ -11,6 +11,6 @@ fun toFinalBuilderBoundary(node: Node<ComshopCommandNode>): BrigadierBuilderBoun
         .modify(node) { node ->
             node
                 .toBrigadierFragment()
-                .wrapBuilderBoundary()
+                .toBrigadierBuilderBoundary()
         }
         .connectBuilderBoundaries()
