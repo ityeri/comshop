@@ -94,6 +94,31 @@ The command above can be used like:
 /somecommand 10 @s red wasans
 ```
 
+## Adding argument structures programmatically
+
+Besides the `arguments { }` block, a complete argument structure can be built and injected with `argument(builder)`:
+
+```kotlin
+import com.github.ityeri.comshop.builder.ArgumentStructureBuilder.ChainStructureBuilder
+
+val commonArguments = ChainStructureBuilder().apply {
+    "x" named int().asArg
+    "y" named double().asArg
+}
+
+register("somecommand") {
+    argument(commonArguments)
+
+    executes {
+        val x: Int = "x" to Int::class
+        ...
+        CommandResult.SUCCESS
+    }
+}
+```
+
+`argument(builder)` takes any `ArgumentStructureBuilder` (single, chain, or union) and adds it to the command's argument alternatives. It is the programmatic counterpart of the `arguments { }` block — it is **not** a subcommand. Use `then(builder)` to add subcommands programmatically (see [Command Structure](command-structure.md)).
+
 ## All argument types
 
 See the [Argument Types Reference](../reference/argument-types.md) for the complete list of built-in types.
