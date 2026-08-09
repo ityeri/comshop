@@ -10,7 +10,7 @@ fun toFinalBuilderBoundary(node: Node<ComshopCommandNode>): BuilderBoundary =
         nodePTraversal<ComshopCommandNode, BuilderBoundary>()
             .modify(node) { node ->
                 node
-                    .toCommandFragment()
+                    .toBrigadierFragment()
                     .wrapBuilderBoundary()
             }
             .connectBuilderBoundaries()

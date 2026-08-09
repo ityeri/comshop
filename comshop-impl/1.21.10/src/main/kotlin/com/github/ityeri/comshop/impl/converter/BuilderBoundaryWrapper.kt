@@ -1,15 +1,15 @@
 package com.github.ityeri.comshop.impl.converter
 
 import com.github.ityeri.comshop.impl.BuilderBoundary
-import com.github.ityeri.comshop.impl.CommandFragment
+import com.github.ityeri.comshop.impl.BrigadierFragment
 
 
-fun CommandFragment.wrapBuilderBoundary(): BuilderBoundary =
+fun BrigadierFragment.wrapBuilderBoundary(): BuilderBoundary =
     when (this) {
-        is CommandFragment.NodeBuilderFragment -> {
+        is BrigadierFragment.NodeBuilderFragment -> {
             BuilderBoundary(listOf(builder), listOf(builder))
         }
-        is CommandFragment.ExecutionFragment -> {
+        is BrigadierFragment.ExecutionFragment -> {
             BuilderBoundary(
                 entries = emptyList(),
                 exits = emptyList(),

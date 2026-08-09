@@ -4,23 +4,23 @@ import com.github.ityeri.comshop.api.ComshopContext
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.impl.BrigadierNodeBuilder
-import com.github.ityeri.comshop.impl.CommandFragment
+import com.github.ityeri.comshop.impl.BrigadierFragment
 import com.github.ityeri.comshop.impl.converter.argument.toBrigadierArgumentType
 import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 
 
-fun ComshopCommandNode.toCommandFragment(): CommandFragment =
+fun ComshopCommandNode.toBrigadierFragment(): BrigadierFragment =
     when (this) {
         is ComshopCommandNode.LiteralCommandNode -> {
-            CommandFragment.NodeBuilderFragment(
+            BrigadierFragment.NodeBuilderFragment(
                 BrigadierNodeBuilder.LiteralNodeBuilder(
                     name, requiresChecker
                 )
             )
         }
         is ComshopCommandNode.ArgumentNode<*> -> {
-            CommandFragment.NodeBuilderFragment(
+            BrigadierFragment.NodeBuilderFragment(
                 BrigadierNodeBuilder.ArgumentNodeBuilder(
                     name,
                     argumentType = argumentType.toBrigadierArgumentType(),
@@ -32,7 +32,7 @@ fun ComshopCommandNode.toCommandFragment(): CommandFragment =
             )
         }
         is ComshopCommandNode.ExecutionNode -> {
-            CommandFragment.ExecutionFragment { context ->
+            BrigadierFragment.ExecutionFragment { context ->
                 val comshopContext = object : ComshopContext {
                     override val source = context.source
 
