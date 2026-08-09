@@ -1,10 +1,10 @@
 package com.github.ityeri.comshop.impl.converter
 
 import com.github.ityeri.comshop.api.node.Node
-import com.github.ityeri.comshop.impl.BuilderBoundary
+import com.github.ityeri.comshop.impl.BrigadierBuilderBoundary
 
 
-fun Node<BuilderBoundary>.connectBuilderBoundaries(): BuilderBoundary =
+fun Node<BrigadierBuilderBoundary>.connectBuilderBoundaries(): BrigadierBuilderBoundary =
     when (this) {
         is Node.SingleNode -> {
             value
@@ -12,7 +12,7 @@ fun Node<BuilderBoundary>.connectBuilderBoundaries(): BuilderBoundary =
         is Node.UnionNode -> {
             val boundaries = nodes.map { it.connectBuilderBoundaries() }
 
-            BuilderBoundary(
+            BrigadierBuilderBoundary(
                 boundaries.flatMap { it.entries },
                 boundaries.flatMap { it.exits },
                 pendingCommand = boundaries.singleOrNull { it.pendingCommand != null }?.pendingCommand
@@ -26,10 +26,10 @@ fun Node<BuilderBoundary>.connectBuilderBoundaries(): BuilderBoundary =
     }
 
 fun connectBoundaryChain(
-    boundaries: List<BuilderBoundary>
-): BuilderBoundary =
+    boundaries: List<BrigadierBuilderBoundary>
+): BrigadierBuilderBoundary =
     if (boundaries.isEmpty()) {
-        BuilderBoundary(listOf(), listOf())
+        BrigadierBuilderBoundary(listOf(), listOf())
     } else if (boundaries.size == 1) {
         boundaries.first()
     } else {

@@ -1,16 +1,16 @@
 package com.github.ityeri.comshop.impl.converter
 
-import com.github.ityeri.comshop.impl.BuilderBoundary
+import com.github.ityeri.comshop.impl.BrigadierBuilderBoundary
 import com.github.ityeri.comshop.impl.BrigadierFragment
 
 
-fun BrigadierFragment.wrapBuilderBoundary(): BuilderBoundary =
+fun BrigadierFragment.wrapBuilderBoundary(): BrigadierBuilderBoundary =
     when (this) {
         is BrigadierFragment.NodeBuilderFragment -> {
-            BuilderBoundary(listOf(builder), listOf(builder))
+            BrigadierBuilderBoundary(listOf(builder), listOf(builder))
         }
         is BrigadierFragment.ExecutionFragment -> {
-            BuilderBoundary(
+            BrigadierBuilderBoundary(
                 entries = emptyList(),
                 exits = emptyList(),
                 pendingCommand = command
