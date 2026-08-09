@@ -67,8 +67,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.ityeri.comshop:front:v2.0.0")
-    implementation("com.github.ityeri.comshop:impl-1.21.10:v2.0.0")
+    implementation("com.github.ityeri.comshop:front:v2.1.0")
+    implementation("com.github.ityeri.comshop:impl-1.21.10:v2.1.0")
 }
 ```
 
@@ -78,8 +78,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.ityeri.comshop:front:v2.0.0'
-    implementation 'com.github.ityeri.comshop:impl-1.21.10:v2.0.0'
+    implementation 'com.github.ityeri.comshop:front:v2.1.0'
+    implementation 'com.github.ityeri.comshop:impl-1.21.10:v2.1.0'
 }
 ```
 

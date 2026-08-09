@@ -24,8 +24,8 @@ Add the `impl-<version>` artifact that matches your server's Paper version. For 
 
 ```kotlin
 dependencies {
-    implementation("com.github.ityeri.comshop:front:v2.0.0")
-    implementation("com.github.ityeri.comshop:impl-1.21.10:v2.0.0")
+    implementation("com.github.ityeri.comshop:front:v2.1.0")
+    implementation("com.github.ityeri.comshop:impl-1.21.10:v2.1.0")
 }
 ```
 
