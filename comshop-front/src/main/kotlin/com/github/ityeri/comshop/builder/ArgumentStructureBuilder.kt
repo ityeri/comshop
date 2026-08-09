@@ -11,6 +11,7 @@ import com.github.ityeri.comshop.api.node.Node
 @ComshopDsl
 sealed interface ArgumentStructureBuilder {
     fun build(): Node<AnyArgumentNode>
+    fun isEmpty(): Boolean
 
 
     @ComshopDsl
@@ -42,6 +43,8 @@ sealed interface ArgumentStructureBuilder {
                 customSuggestionProvider
             )
 
+        override fun isEmpty(): Boolean = false
+
         override fun build(): Node<AnyArgumentNode> =
             Node.SingleNode(
                 ComshopCommandNode.ArgumentNode(
@@ -65,7 +68,7 @@ sealed interface ArgumentStructureBuilder {
     ) : ArgumentStructureBuilder, NativeArgumentTypeFactory() {
         val <T : Any> ComshopArgumentType<T>.asArg: SingleArgumentBuilder<T>
             get() = SingleArgumentBuilder(argumentType = this)
-        fun isEmpty(): Boolean = subBuilders.isEmpty()
+        override fun isEmpty(): Boolean = subBuilders.all { it.isEmpty() }
 
         infix fun <T : Any> String.named(builder: SingleArgumentBuilder<T>) {
             subBuilders.add(builder.named(this))
