@@ -11,8 +11,9 @@ A custom argument type is always built on top of a `NativeArgumentType`. It work
 * `suggest(writingContext: CommandWritingContext, source: CommandSourceStack): Iterable<SuggestionElement>` — provide suggestions
 
 ```kotlin
-class FruitArgumentType :
-    ComshopCustomArgumentType<Fruit, String>(NativeArgumentType.StringArgumentType(StringType.WORD)) {
+class FruitArgumentType : ComshopCustomArgumentType<Fruit, String> {
+    override val nativeArgumentType: NativeArgumentType<String> =
+        NativeArgumentType.StringArgumentType(StringType.WORD)
 
     override fun parse(nativeValue: String, source: CommandSourceStack): Fruit {
         return Fruit.valueOf(nativeValue.uppercase())
