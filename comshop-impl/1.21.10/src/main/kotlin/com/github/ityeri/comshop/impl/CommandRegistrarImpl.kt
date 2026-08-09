@@ -1,10 +1,11 @@
 package com.github.ityeri.comshop.impl
 
 import com.github.ityeri.comshop.api.entry.AbstractCommandRegistrar
-import com.github.ityeri.comshop.impl.converter.connectCommandFragments
-import com.github.ityeri.comshop.impl.converter.toCommandFragmentNode
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
+import com.github.ityeri.comshop.impl.converter.connectBuilderBoundaries
+import com.github.ityeri.comshop.impl.converter.toBuilderBoundaryWrappedNode
+import com.github.ityeri.comshop.impl.converter.toCommandFragmentNode
 import com.mojang.brigadier.tree.LiteralCommandNode
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
@@ -19,14 +20,17 @@ class CommandRegistrarImpl : AbstractCommandRegistrar {
             val commands = event.registrar()
 
             for (node in nodes) {
-                val convertedNode = toCommandFragmentNode(node)
-                val boundary = connectCommandFragments(convertedNode)
+                val commandFragmentNode = toCommandFragmentNode(node)
+                val builderBoundaryNode = toBuilderBoundaryWrappedNode(commandFragmentNode)
+                val builderBoundary = connectBuilderBoundaries(builderBoundaryNode)
 
-                if (boundary.entries.size != 1) {
+                if (builderBoundary.entries.size != 1) {
                     throw IllegalArgumentException("??")
                 }
 
-                commands.register(boundary.entries.first().build() as LiteralCommandNode<CommandSourceStack>)
+                commands.register(
+                    builderBoundary.entries.first().build() as LiteralCommandNode<CommandSourceStack>
+                )
             }
         }
     }
