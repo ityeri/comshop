@@ -8,8 +8,9 @@ comshop separates the command definition (version-independent) from the registra
 |---------------|-----------------------|---------------|
 | 1.21.3        | `impl-1.21.10`        | ❌ Incompatible |
 | 1.21.4        | `impl-1.21.10`        | ✅ Compatible   |
-| 1.21.10       | `impl-1.21.10`        | ✅ Compatible   |
-| 26.1.2        | `impl-1.21.10`        | ✅ Compatible   |
+| 1.21.10       | `impl-1.21.10`             | ✅ Compatible   |
+| 26.1.2        | `impl-1.21.10`             | ✅ Compatible   |
+| 26.2          | `impl-1.21.10`             | ✅ Compatible   |
 
 Notes:
 
