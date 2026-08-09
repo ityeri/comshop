@@ -4,16 +4,16 @@ import com.github.ityeri.comshop.impl.BuilderBoundary
 import com.github.ityeri.comshop.impl.CommandFragment
 
 
-fun toBuilderBoundary(commandFragment: CommandFragment): BuilderBoundary =
-    when (commandFragment) {
+fun CommandFragment.wrapBuilderBoundary(): BuilderBoundary =
+    when (this) {
         is CommandFragment.NodeBuilderFragment -> {
-            BuilderBoundary(listOf(commandFragment.builder), listOf(commandFragment.builder))
+            BuilderBoundary(listOf(builder), listOf(builder))
         }
         is CommandFragment.ExecutionFragment -> {
             BuilderBoundary(
                 entries = emptyList(),
                 exits = emptyList(),
-                pendingCommand = commandFragment.command
+                pendingCommand = command
             )
         }
     }

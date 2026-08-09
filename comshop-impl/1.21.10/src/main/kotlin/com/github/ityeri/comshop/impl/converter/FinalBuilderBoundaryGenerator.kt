@@ -6,12 +6,11 @@ import com.github.ityeri.comshop.impl.BuilderBoundary
 import com.github.ityeri.comshop.impl.optic.nodePTraversal
 
 
-fun toSingleBuilderBoundary(node: Node<ComshopCommandNode>): BuilderBoundary =
-    connectBuilderBoundaries(
+fun toFinalBuilderBoundary(node: Node<ComshopCommandNode>): BuilderBoundary =
         nodePTraversal<ComshopCommandNode, BuilderBoundary>()
             .modify(node) { node ->
-                toBuilderBoundary(
-                    toCommandFragment(node)
-                )
+                node
+                    .toCommandFragment()
+                    .wrapBuilderBoundary()
             }
-    )
+            .connectBuilderBoundaries()

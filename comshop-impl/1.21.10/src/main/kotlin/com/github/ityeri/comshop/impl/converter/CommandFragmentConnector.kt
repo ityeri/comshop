@@ -4,13 +4,13 @@ import com.github.ityeri.comshop.api.node.Node
 import com.github.ityeri.comshop.impl.BuilderBoundary
 
 
-fun connectBuilderBoundaries(node: Node<BuilderBoundary>): BuilderBoundary =
-    when (node) {
+fun Node<BuilderBoundary>.connectBuilderBoundaries(): BuilderBoundary =
+    when (this) {
         is Node.SingleNode -> {
-            node.value
+            value
         }
         is Node.UnionNode -> {
-            val boundaries = node.nodes.map { connectBuilderBoundaries(it) }
+            val boundaries = nodes.map { it.connectBuilderBoundaries() }
 
             BuilderBoundary(
                 boundaries.flatMap { it.entries },
@@ -20,7 +20,7 @@ fun connectBuilderBoundaries(node: Node<BuilderBoundary>): BuilderBoundary =
         }
         is Node.ChainNode -> {
             connectBoundaryChain(
-                node.nodes.map { connectBuilderBoundaries(it) }
+                nodes.map { it.connectBuilderBoundaries() }
             )
         }
     }

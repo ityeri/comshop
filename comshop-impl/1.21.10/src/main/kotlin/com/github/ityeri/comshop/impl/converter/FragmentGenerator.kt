@@ -10,22 +10,22 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 
 
-fun toCommandFragment(commandNode: ComshopCommandNode): CommandFragment =
-    when (commandNode) {
+fun ComshopCommandNode.toCommandFragment(): CommandFragment =
+    when (this) {
         is ComshopCommandNode.LiteralCommandNode -> {
             CommandFragment.NodeBuilderFragment(
                 BrigadierNodeBuilder.LiteralNodeBuilder(
-                    commandNode.name, commandNode.requiresChecker
+                    name, requiresChecker
                 )
             )
         }
         is ComshopCommandNode.ArgumentNode<*> -> {
             CommandFragment.NodeBuilderFragment(
                 BrigadierNodeBuilder.ArgumentNodeBuilder(
-                    commandNode.name,
-                    argumentType = commandNode.argumentType.toBrigadierArgumentType(),
-                    requiresChecker =  commandNode.requiresChecker,
-                    suggestionProvider = commandNode.customSuggestionProvider?.let {
+                    name,
+                    argumentType = argumentType.toBrigadierArgumentType(),
+                    requiresChecker =  requiresChecker,
+                    suggestionProvider = customSuggestionProvider?.let {
                         toBrigadierSuggestionProvider(it)
                     }
                 )
@@ -42,7 +42,7 @@ fun toCommandFragment(commandNode: ComshopCommandNode): CommandFragment =
                 }
 
                 try {
-                    commandNode.commandBlock(comshopContext).toInt()
+                    commandBlock(comshopContext).toInt()
                 }
                 catch (e: ComshopCommandException) {
                     throw SimpleCommandExceptionType({ e.message }).create()
