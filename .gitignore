@@ -128,3 +128,5 @@ __pycache__/
 
 # 코틀린 관련 파일
 *.salive
+# MkDocs build output
+site/
