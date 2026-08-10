@@ -20,8 +20,8 @@ class CommandBuilder(val name: String) {
         this.requiresChecker = requiresChecker
     }
 
-    fun arguments(builder: CommandBuilder) {
-        subCommandBuilders.add(builder)
+    fun argument(builder: ArgumentStructureBuilder) {
+        argumentStructureBuilder.argument(builder)
     }
     fun arguments(block: ChainStructureBuilder.() -> Unit) {
         argumentStructureBuilder.arguments(block)
@@ -50,14 +50,22 @@ class CommandBuilder(val name: String) {
             ),
             Node.UnionNode(
                 *subCommandBuilders.map { it.build() }.toTypedArray(),
-                Node.ChainNode(
-                    argumentStructureBuilder.build(),
+                if (argumentStructureBuilder.isEmpty()) {
                     Node.SingleNode(
                         ComshopCommandNode.ExecutionNode(
                             commandBlock = { CommandExecutionContext(it).run(executor) }
                         )
                     )
-                )
+                } else {
+                    Node.ChainNode(
+                        argumentStructureBuilder.build(),
+                        Node.SingleNode(
+                            ComshopCommandNode.ExecutionNode(
+                                commandBlock = { CommandExecutionContext(it).run(executor) }
+                            )
+                        )
+                    )
+                }
             )
         )
 }

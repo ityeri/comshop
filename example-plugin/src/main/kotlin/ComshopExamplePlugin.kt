@@ -13,15 +13,18 @@ class ComshopExamplePlugin : JavaPlugin() {
 
         register(teamCommand)
 
+        register(fruitCommand)
+        register(stringFruitCommand)
+
         register("mytp") {
             requires { sender.isOp }
 
             arguments {
-                "target" to entity()
-                "to" to entity()
+                "target" named entity().asArg
+                "to" named entity().asArg
             }
             arguments {
-                "target" to entity()
+                "target" named entity().asArg
             }
 
             executes {
@@ -49,7 +52,7 @@ class ComshopExamplePlugin : JavaPlugin() {
 
         register("sendtozero") {
             arguments {
-                "entities" to entities()
+                "entities" named entities().asArg
             }
 
             executes {

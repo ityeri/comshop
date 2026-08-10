@@ -1,12 +1,9 @@
 import com.github.ityeri.comshop.api.CommandResult
-import com.github.ityeri.comshop.api.CommandWritingContext
-import com.github.ityeri.comshop.api.argument.ComshopCustomArgumentType
-import com.github.ityeri.comshop.api.argument.NativeArgumentType
 import com.github.ityeri.comshop.api.argument.StringType
-import com.github.ityeri.comshop.api.argument.SuggestionElement
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
 import com.github.ityeri.comshop.command
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import com.github.ityeri.comshop.customArgument
+import com.github.ityeri.comshop.simpleSuggests
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.entity.Player
@@ -27,21 +24,18 @@ object TeamManager {
         teams.find({ it.name == name })
 }
 
-class TeamArgumentType :
-    ComshopCustomArgumentType<Team, String>(NativeArgumentType.StringArgumentType(StringType.QUOTED)) {
-    override fun parse(
-        nativeValue: String,
-        source: CommandSourceStack
-    ): Team =
-        TeamManager.findByName(nativeValue) ?: throw ComshopCommandException("Team is not found")
+fun TeamArgumentType() = customArgument {
+    native(quotedString())
 
-    override fun suggest(
-        writingContext: CommandWritingContext,
-        source: CommandSourceStack
-    ): Iterable<SuggestionElement> =
-        TeamManager.teams.map {
-            SuggestionElement("\"${it.name}\"")
-        }
+    parses { nativeValue, source ->
+        println(nativeValue)
+        TeamManager.findByName(nativeValue) ?:
+        throw ComshopCommandException("The team name was not found")
+    }
+
+    simpleSuggests(StringType.QUOTED) {
+        TeamManager.teams.map { it.name }
+    }
 }
 
 data class Team(
@@ -54,7 +48,7 @@ val teamCommand = command("myteam") {
     requires { sender.isOp }
 
     arguments {
-        "team" to TeamArgumentType()
+        "team" named TeamArgumentType().asArg
     }
 
     executes {
@@ -76,8 +70,8 @@ val teamCommand = command("myteam") {
 
     then("new") {
         arguments {
-            "name" to quotedString()
-            "color" to namedColor()
+            "name" named quotedString().asArg
+            "color" named namedColor().asArg
         }
 
         executes {
@@ -112,8 +106,8 @@ val teamCommand = command("myteam") {
 
     then("join") {
         arguments {
-            "team" to TeamArgumentType()
-            "player" to player()
+            "team" named TeamArgumentType().asArg
+            "player" named player().asArg
         }
 
         executes {

@@ -1,10 +1,9 @@
 package com.github.ityeri.comshop.impl
 
 import com.github.ityeri.comshop.api.entry.AbstractCommandRegistrar
-import com.github.ityeri.comshop.impl.converter.connectCommandFragments
-import com.github.ityeri.comshop.impl.converter.toCommandFragmentNode
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
+import com.github.ityeri.comshop.impl.converter.toFinalBuilderBoundary
 import com.mojang.brigadier.tree.LiteralCommandNode
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
@@ -19,14 +18,19 @@ class CommandRegistrarImpl : AbstractCommandRegistrar {
             val commands = event.registrar()
 
             for (node in nodes) {
-                val convertedNode = toCommandFragmentNode(node)
-                val boundary = connectCommandFragments(convertedNode)
+                val builderBoundary = toFinalBuilderBoundary(node)
 
-                if (boundary.entries.size != 1) {
-                    throw IllegalArgumentException("??")
+                if (builderBoundary.entries.size != 1) {
+                    throw IllegalStateException(
+                        "The final builder boundary must reduce to exactly one entry (the command's root literal), "
+                                + "but ${builderBoundary.entries.size} entries were found. "
+                                + "This is most likely an internal error in the comshop node conversion pipeline"
+                    )
                 }
 
-                commands.register(boundary.entries.first().build() as LiteralCommandNode<CommandSourceStack>)
+                commands.register(
+                    builderBoundary.entries.first().build() as LiteralCommandNode<CommandSourceStack>
+                )
             }
         }
     }
