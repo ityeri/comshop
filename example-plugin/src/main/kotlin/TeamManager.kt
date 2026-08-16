@@ -28,7 +28,6 @@ fun TeamArgumentType() = customArgument {
     native(quotedString())
 
     parses { nativeValue, source ->
-        println(nativeValue)
         TeamManager.findByName(nativeValue) ?:
         throw ComshopCommandException("The team name was not found")
     }

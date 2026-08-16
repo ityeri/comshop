@@ -10,54 +10,55 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 import java.util.function.Predicate
 
 
-sealed class BrigadierNodeBuilder {
-    val children: MutableList<BrigadierNodeBuilder> = mutableListOf()
-    var command: Command<CommandSourceStack>? = null
+class BrigadierNodeBuilder(
+    val innerNode: TaillessBrigadierNode,
+    val children: Iterable<BrigadierNodeBuilder>,
+    val command: Command<CommandSourceStack>? = null
+) {
+    fun build(): CommandNode<CommandSourceStack> =
+        when (innerNode) {
+            is TaillessBrigadierNode.Literal ->
+                LiteralCommandNode(
+                    innerNode.literal,
+                    command,
+                    innerNode.requiresChecker,
+                    null,
+                    null,
+                    false
+                ).apply {
+                    this@BrigadierNodeBuilder.children.forEach {
+                        addChild(it.build())
+                    }
+                }
+            is TaillessBrigadierNode.Argument ->
+                ArgumentCommandNode(
+                    innerNode.name,
+                    innerNode.argumentType,
+                    command,
+                    innerNode.requiresChecker,
+                    null,
+                    null,
+                    false,
+                    innerNode.customSuggestions
+                ).apply {
+                    this@BrigadierNodeBuilder.children.forEach {
+                        addChild(it.build())
+                    }
+                }
+        }
+}
+
+sealed class TaillessBrigadierNode {
     abstract val requiresChecker: Predicate<CommandSourceStack>?
 
-    abstract fun build(): CommandNode<CommandSourceStack>
-
-    class LiteralNodeBuilder(
+    data class Literal(
         val literal: String,
-        override val requiresChecker: Predicate<CommandSourceStack>? = null
-    ) : BrigadierNodeBuilder() {
-        override fun build(): CommandNode<CommandSourceStack> {
-            val node = LiteralCommandNode(
-                literal,
-                command,
-                requiresChecker,
-                null,
-                null,
-                false
-            )
-
-            children.forEach { node.addChild(it.build()) }
-
-            return node
-        }
-    }
-
-    class ArgumentNodeBuilder<T>(
+        override val requiresChecker: Predicate<CommandSourceStack>?
+    ) : TaillessBrigadierNode()
+    data class Argument(
         val name: String,
-        val argumentType: ArgumentType<T>,
-        override val requiresChecker: Predicate<CommandSourceStack>? = null,
-        val suggestionProvider: SuggestionProvider<CommandSourceStack>? = null
-    ) : BrigadierNodeBuilder() {
-        override fun build(): CommandNode<CommandSourceStack> {
-            val node = ArgumentCommandNode(
-                name,
-                argumentType,
-                command,
-                requiresChecker,
-                null,
-                null,
-                false,
-                suggestionProvider // TODO can compose function in here? yep.
-            )
-
-            children.forEach { node.addChild(it.build()) }
-
-            return node
-        }
-    }
+        val argumentType: ArgumentType<*>,
+        val customSuggestions: SuggestionProvider<CommandSourceStack>?,
+        override val requiresChecker: Predicate<CommandSourceStack>
+    ) : TaillessBrigadierNode()
 }
