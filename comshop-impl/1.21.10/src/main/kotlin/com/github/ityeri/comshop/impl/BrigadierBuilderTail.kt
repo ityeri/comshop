@@ -4,13 +4,9 @@ import com.mojang.brigadier.Command
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
 
-sealed class BrigadierBuilderTail {
-    class BuilderTail(
-        val entries: Collection<BrigadierNodeBuilder>
-    ) : BrigadierBuilderTail() {
-        constructor (entry: BrigadierNodeBuilder) : this (entries = listOf(entry))
-    }
-    class CommandTail(
-        val command: Command<CommandSourceStack>
-    ) : BrigadierBuilderTail()
+data class BrigadierBuilderTail(
+    val entries: Collection<BrigadierNodeBuilder> = emptyList(),
+    val command: Command<CommandSourceStack>? = null
+) {
+    constructor(entry: BrigadierNodeBuilder) : this(listOf(entry))
 }

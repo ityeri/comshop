@@ -13,39 +13,39 @@ fun Node<ComshopCommandNode>.createTailWith(tail: BrigadierBuilderTail): Brigadi
         is Node.SingleNode ->
             when (val commandNode = value) {
                 is ComshopCommandNode.LiteralCommandNode ->
-                    BrigadierBuilderTail.BuilderTail(
+                    BrigadierBuilderTail(
                         BrigadierNodeBuilder(
                             commandNode.toTaillessBrigadierNode(),
-                            children = if (tail is BrigadierBuilderTail.BuilderTail) tail.entries else emptyList(),
-                            command = if (tail is BrigadierBuilderTail.CommandTail) tail.command else null
+                            children = tail.entries,
+                            command = tail.command
                         )
                     )
+
                 is ComshopCommandNode.ArgumentNode<*> ->
-                    BrigadierBuilderTail.BuilderTail(
+                    BrigadierBuilderTail(
                         BrigadierNodeBuilder(
                             commandNode.toTaillessBrigadierNode(),
-                            children = if (tail is BrigadierBuilderTail.BuilderTail) tail.entries else emptyList(),
-                            command = if (tail is BrigadierBuilderTail.CommandTail) tail.command else null
+                            children = tail.entries,
+                            command = tail.command
                         )
                     )
+
                 is ComshopCommandNode.ExecutionNode ->
-                    BrigadierBuilderTail.CommandTail(commandNode.commandBlock.toBrigadierCommand())
+                    BrigadierBuilderTail(command = commandNode.commandBlock.toBrigadierCommand())
             }
+
         is Node.UnionNode -> {
             val tails = nodes.map {
                 it.createTailWith(tail)
             }
-            val foundCommandBoundary = tails.singleOrNull { it is BrigadierBuilderTail.CommandTail }
-                    as BrigadierBuilderTail.CommandTail?
+            val foundCommand = tails.singleOrNull { it.command != null }?.command
 
-            if (foundCommandBoundary != null) {
-                BrigadierBuilderTail.CommandTail(foundCommandBoundary.command)
-            } else {
-                BrigadierBuilderTail.BuilderTail(
-                    tails.flatMap { (it as BrigadierBuilderTail.BuilderTail).entries }
-                )
-            }
+            BrigadierBuilderTail(
+                entries = tails.flatMap { it.entries },
+                command = foundCommand
+            )
         }
+
         is Node.ChainNode -> {
             nodes.foldRight(tail) { commandNode, tail ->
                 commandNode.createTailWith(tail)
@@ -53,11 +53,13 @@ fun Node<ComshopCommandNode>.createTailWith(tail: BrigadierBuilderTail): Brigadi
         }
     }
 
+
 fun ComshopCommandNode.LiteralCommandNode.toTaillessBrigadierNode(): TaillessBrigadierNode.Literal =
     TaillessBrigadierNode.Literal(
         literal = name,
         requiresChecker = requiresChecker
     )
+
 fun ComshopCommandNode.ArgumentNode<*>.toTaillessBrigadierNode(): TaillessBrigadierNode =
     TaillessBrigadierNode.Argument(
         name = name,

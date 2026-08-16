@@ -18,26 +18,18 @@ class CommandRegistrarImpl : AbstractCommandRegistrar {
             val commands = event.registrar()
 
             for (node in nodes) {
-                val builderTail = node.createTailWith(BrigadierBuilderTail.BuilderTail(emptyList()))
+                val builderTail = node.createTailWith(BrigadierBuilderTail(emptyList()))
 
-                when (builderTail) {
-                    is BrigadierBuilderTail.BuilderTail ->
-                        if (builderTail.entries.size != 1)
-                            throw IllegalStateException(
-                                "The final builder tail must reduce to exactly one entry (the command's root literal), "
-                                        + "but ${builderTail.entries.size} entries were found. "
-                                        + "This is most likely an internal error in the comshop node conversion pipeline"
-                            )
-                        else commands.register(
-                            builderTail.entries.first().build() as LiteralCommandNode<CommandSourceStack>
-                        )
-                    is BrigadierBuilderTail.CommandTail ->
-                        throw IllegalStateException(
-                            "The final builder tail must reduce to BuilderTail "
-                                    + "but CommandTail were found. "
-                                    + "This is most likely an internal error in the comshop node conversion pipeline"
-                        )
-                }
+                if (builderTail.entries.size != 1)
+                    throw IllegalStateException(
+                        "The final builder tail must reduce to exactly one entry (the command's root literal), "
+                                + "but ${builderTail.entries.size} entries were found. "
+                                + "This is most likely an internal error in the comshop node conversion pipeline"
+                    )
+                else
+                    commands.register(
+                        builderTail.entries.first().build() as LiteralCommandNode<CommandSourceStack>
+                    )
             }
         }
     }
