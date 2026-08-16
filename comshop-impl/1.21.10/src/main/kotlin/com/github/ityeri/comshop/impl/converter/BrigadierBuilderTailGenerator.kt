@@ -47,7 +47,7 @@ fun Node<ComshopCommandNode>.createTailWith(tail: BrigadierBuilderTail): Brigadi
             }
         }
         is Node.ChainNode -> {
-            nodes.foldRight(nodes.last().createTailWith(tail)) { commandNode, tail ->
+            nodes.foldRight(tail) { commandNode, tail ->
                 commandNode.createTailWith(tail)
             }
         }
