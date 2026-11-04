@@ -2,7 +2,7 @@ package com.github.ityeri.comshop.impl.converter.argument
 
 import com.github.ityeri.comshop.api.argument.ComshopCustomArgumentType
 import com.github.ityeri.comshop.api.exception.ComshopCommandException
-import com.github.ityeri.comshop.impl.converter.toBrigadierSuggestionProvider
+import com.github.ityeri.comshop.impl.converter.toBrigadierProvider
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.context.CommandContext
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture
 fun <T : Any, N : Any> ComshopCustomArgumentType<T, N>.customTypeToBrigadierArgumentType(): ArgumentType<T> =
     object : CustomArgumentType<T, N> {
 
-        val suggestionProvider = toBrigadierSuggestionProvider(this@customTypeToBrigadierArgumentType::suggest)
+        val suggestionProvider = this@customTypeToBrigadierArgumentType::suggest.toBrigadierProvider()
 
         override fun parse(reader: StringReader): T {
             throw NotImplementedError(

@@ -9,6 +9,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack
 
 
 typealias CustomSuggestionProvider = (CommandWritingContext, CommandSourceStack) -> Iterable<SuggestionElement>
+typealias ComshopCommandBlock = (ComshopContext) -> CommandResult
 
 sealed class ComshopCommandNode {
     class LiteralCommandNode(
@@ -24,6 +25,6 @@ sealed class ComshopCommandNode {
     ) : ComshopCommandNode()
 
     class ExecutionNode(
-        val commandBlock: (ComshopContext) -> CommandResult
+        val commandBlock: ComshopCommandBlock
     ) : ComshopCommandNode()
 }
