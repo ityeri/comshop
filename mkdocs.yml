@@ -64,7 +64,6 @@ nav:
   - Examples: examples.md
   - Internals:
       - Architecture: internals/architecture.md
-      - Adding a Version: internals/adding-a-version.md
   - FAQ: faq.md
 
 extra:

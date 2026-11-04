@@ -31,5 +31,3 @@ dependencies {
 
 * Support for Paper versions below 1.21.4 is planned.
 * New implementation modules will be published as separate artifacts (`impl-<mc version>`).
-
-If you want to contribute a new implementation module, see [Adding a Version](../internals/adding-a-version.md).
