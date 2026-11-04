@@ -1,42 +1,7 @@
 # Custom Arguments
 
-A custom argument type is always built on top of a `NativeArgumentType`. It works like a **converter**: the native value is parsed first, then converted into your own type by custom logic.
-
-## The interface
-
-`ComshopCustomArgumentType<T, N>` has three members:
-
-* `nativeArgumentType: NativeArgumentType<N>` — the underlying native type
-* `parse(nativeValue: N, source: CommandSourceStack): T` — convert the native value into your type
-* `suggest(writingContext: CommandWritingContext, source: CommandSourceStack): Iterable<SuggestionElement>` — provide suggestions
-
-```kotlin
-class FruitArgumentType : ComshopCustomArgumentType<Fruit, String> {
-    override val nativeArgumentType: NativeArgumentType<String> =
-        NativeArgumentType.StringArgumentType(StringType.WORD)
-
-    override fun parse(nativeValue: String, source: CommandSourceStack): Fruit {
-        return Fruit.valueOf(nativeValue.uppercase())
-    }
-
-    override fun suggest(
-        writingContext: CommandWritingContext,
-        source: CommandSourceStack
-    ): Iterable<SuggestionElement> {
-        return Fruit.entries
-            .filter { it.name.lowercase().startsWith(writingContext.remainingLower) }
-            .map { SuggestionElement(it.name.lowercase()) }
-    }
-}
-```
-
-Use it like any other argument type:
-
-```kotlin
-arguments {
-    "fruit" named FruitArgumentType().asArg
-}
-```
+A custom argument type is always built on top of a `NativeArgumentType`. It works like a **converter**: the native value
+is parsed first, then converted into your own type by custom logic.
 
 ## The builder DSL
 
@@ -59,9 +24,18 @@ fun TeamArgumentType() = customArgument {
 
 The builder requires three blocks — missing ones throw an `IllegalStateException` with a hint:
 
-* `native(...)` — the underlying native argument type (all factory functions from [Argument Types](../reference/argument-types.md) are available)
+* `native(...)` — the underlying native argument type (all factory functions
+  from [Argument Types](../reference/argument-types.md) are available)
 * `parses { nativeValue, source -> ... }` — conversion logic
 * `suggests { ... }` — suggestion logic (or use `simpleSuggests`)
+
+Use it like any other argument type:
+
+```kotlin
+arguments {
+    "fruit" named FruitArgumentType().asArg
+}
+```
 
 ## Convenience functions
 
@@ -82,12 +56,12 @@ selectArgument("red", "green", "blue")            // fixed list
 
 Options:
 
-| Parameter | Default | Meaning |
-|-----------|---------|---------|
-| `stringType` | `WORD` | Underlying string type |
-| `ignoreCase` | `true` | Case-insensitive matching |
-| `suggestOnlyMatches` | `true` | Only suggest matching elements |
-| `whenException` | throws | Custom error when the input does not match (`ComshopCommandException("Value \"...\" does not exist.")`) |
+| Parameter            | Default | Meaning                                                                                                 |
+|----------------------|---------|---------------------------------------------------------------------------------------------------------|
+| `stringType`         | `WORD`  | Underlying string type                                                                                  |
+| `ignoreCase`         | `true`  | Case-insensitive matching                                                                               |
+| `suggestOnlyMatches` | `true`  | Only suggest matching elements                                                                          |
+| `whenException`      | throws  | Custom error when the input does not match (`ComshopCommandException("Value \"...\" does not exist.")`) |
 
 ### enumArgument — enum as argument
 
@@ -129,4 +103,38 @@ parses { nativeValue, source ->
 }
 ```
 
-Brigadier's `CommandSyntaxException` is **not** allowed inside custom argument logic — throwing it is treated as a programming error (see [Results & Errors](results-and-errors.md)).
+Brigadier's `CommandSyntaxException` is **not** allowed inside custom argument logic — throwing it is treated as a
+programming error (see [Results & Errors](results-and-errors.md)).
+
+## Implement the interface manually
+
+`ComshopCustomArgumentType` is a low-level interface for making a custom argument type. In most of the cases, builder
+DSL
+is more recommended.
+
+`ComshopCustomArgumentType<T, N>` has three members:
+
+* `nativeArgumentType: NativeArgumentType<N>` — the underlying native type
+* `parse(nativeValue: N, source: CommandSourceStack): T` — convert the native value into your type
+* `suggest(writingContext: CommandWritingContext, source: CommandSourceStack): Iterable<SuggestionElement>` — provide
+  suggestions
+
+```kotlin
+class FruitArgumentType : ComshopCustomArgumentType<Fruit, String> {
+    override val nativeArgumentType: NativeArgumentType<String> =
+        NativeArgumentType.StringArgumentType(StringType.WORD)
+
+    override fun parse(nativeValue: String, source: CommandSourceStack): Fruit {
+        return Fruit.valueOf(nativeValue.uppercase())
+    }
+
+    override fun suggest(
+        writingContext: CommandWritingContext,
+        source: CommandSourceStack
+    ): Iterable<SuggestionElement> {
+        return Fruit.entries
+            .filter { it.name.lowercase().startsWith(writingContext.remainingLower) }
+            .map { SuggestionElement(it.name.lowercase()) }
+    }
+}
+```
