@@ -1,22 +1,20 @@
 # Version Compatibility
 
-comshop separates the command definition (version-independent) from the registration implementation (version-specific). Your command code stays the same; only the `impl` artifact changes per Paper version.
+comshop separates the command definition (version-independent) from the registration implementation (version-specific).
+Your command code stays the same; only the `impl` artifact changes per Paper version.
 
 ## Supported Paper versions
 
-| Paper version | Implementation module | Compatibility |
-|---------------|-----------------------|---------------|
+| Paper version | Implementation module | Compatibility  |
+|---------------|-----------------------|----------------|
 | 1.21.3        | `impl-1.21.10`        | ❌ Incompatible |
-| 1.21.4        | `impl-1.21.10`        | ✅ Compatible   |
-| 1.21.10       | `impl-1.21.10`             | ✅ Compatible   |
-| 26.1.2        | `impl-1.21.10`             | ✅ Compatible   |
-| 26.2          | `impl-1.21.10`             | ✅ Compatible   |
+| 1.21.4 - 26.3 | `impl-1.21.10`        | ✅ Compatible   |
 
 Notes:
 
 * The `comshop-interface` module is compiled against the Paper 1.21.4 API.
 * The only implementation module currently available is `impl-1.21.10`, built against Paper 1.21.10.
-* The `example-plugin` test server runs Paper 26.2.
+* The `example-plugin` test server runs Paper 26.3.
 
 ## Choosing an implementation module
 

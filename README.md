@@ -19,7 +19,9 @@
 
 ## What is comshop?
 
-comshop is a library for defining Minecraft commands in Kotlin, made for the [Paper API](https://papermc.io/software/paper). Instead of hand-building Brigadier node trees — literals, arguments, requirement predicates, executors, suggestion providers — you write declarative DSL blocks:
+comshop is a library for defining Minecraft commands in Kotlin, made for
+the [Paper API](https://papermc.io/software/paper). Instead of hand-building Brigadier node trees — literals, arguments,
+requirement predicates, executors, suggestion providers — you write declarative DSL blocks:
 
 ```kotlin
 register("sendtozero") {
@@ -44,7 +46,8 @@ register("sendtozero") {
 - **Minimal boilerplate** — what takes a dozen+ lines of raw Brigadier fits in a few DSL blocks
 - **Declarative DSL** — `requires` / `arguments` / `executes` / `then`, command overloads, and `unions` branching
 - **40 built-in argument types** — primitives, strings, entities, positions, world state, registry types
-- **Custom argument types** — defined as converters on top of native types (`customArgument`, `selectArgument`, `enumArgument`)
+- **Custom argument types** — defined as converters on top of native types (`customArgument`, `selectArgument`,
+  `enumArgument`)
 - **Custom suggestions** — with tooltips and QUOTED-string handling
 - **Version-independent** — swap the `impl` module to support a different Paper version; your command code never changes
 
@@ -59,7 +62,8 @@ The full documentation lives at **[https://ityeri.github.io/comshop/](https://it
 
 ## Installation
 
-comshop is distributed via [JitPack](https://jitpack.io/#ityeri/comshop). Add the repository and **two** dependencies — the DSL (`front`) and the implementation for your Paper version (`impl-<version>`):
+comshop is distributed via [JitPack](https://jitpack.io/#ityeri/comshop). Add the repository and **two** dependencies —
+the DSL (`front`) and the implementation for your Paper version (`impl-<version>`):
 
 ```kotlin
 repositories {
@@ -95,19 +99,17 @@ class MyPlugin : JavaPlugin() {
 
 ## Supported Paper versions
 
-| Paper version | Implementation module | Compatibility |
-|---------------|-----------------------|---------------|
-| 1.21.3        | `impl-1.21.10`         | ❌ Incompatible |
-| 1.21.4        | `impl-1.21.10`         | ✅ Compatible |
-| 1.21.10       | `impl-1.21.10`         | ✅ Compatible |
-| 26.1.2        | `impl-1.21.10`         | ✅ Compatible |
-| 26.2          | `impl-1.21.10`         | ✅ Compatible |
+| Paper version | Implementation module | Compatibility  |
+|---------------|-----------------------|----------------|
+| 1.21.3        | `impl-1.21.10`        | ❌ Incompatible |
+| 1.21.4 - 26.3 | `impl-1.21.10`        | ✅ Compatible   |
 
 Support for Paper versions below 1.21.4 is planned.
 
 ## Examples
 
-Complete, copy-pasteable commands are in the [examples documentation](https://ityeri.github.io/comshop/examples/) and in the [`example-plugin`](example-plugin/) module.
+Complete, copy-pasteable commands are in the [examples documentation](https://ityeri.github.io/comshop/examples/) and in
+the [`example-plugin`](example-plugin/) module.
 
 ## License
 

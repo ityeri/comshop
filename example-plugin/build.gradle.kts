@@ -5,7 +5,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
-val pluginPaperVersion = "26.2"
+val pluginPaperVersion = "26.3"
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:$pluginPaperVersion.build.+")
@@ -25,4 +25,3 @@ tasks.runServer {
 kotlin {
     jvmToolchain(25)
 }
-
