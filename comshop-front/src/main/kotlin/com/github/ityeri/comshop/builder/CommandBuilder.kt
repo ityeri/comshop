@@ -1,12 +1,12 @@
 package com.github.ityeri.comshop.builder
 
-import com.github.ityeri.comshop.builder.ArgumentStructureBuilder.ChainStructureBuilder
-import com.github.ityeri.comshop.context.CommandExecutionContext
-import com.github.ityeri.comshop.context.SourceContext
 import com.github.ityeri.comshop.ComshopDsl
 import com.github.ityeri.comshop.api.CommandResult
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
+import com.github.ityeri.comshop.builder.ArgumentStructureBuilder.ChainStructureBuilder
+import com.github.ityeri.comshop.context.CommandExecutionContext
+import com.github.ityeri.comshop.context.SourceContext
 
 
 @ComshopDsl
@@ -23,6 +23,7 @@ class CommandBuilder(val name: String) {
     fun argument(builder: ArgumentStructureBuilder) {
         argumentStructureBuilder.argument(builder)
     }
+
     fun arguments(block: ChainStructureBuilder.() -> Unit) {
         argumentStructureBuilder.arguments(block)
     }
@@ -34,6 +35,7 @@ class CommandBuilder(val name: String) {
     fun then(builder: CommandBuilder) {
         subCommandBuilders.add(builder)
     }
+
     fun then(name: String, block: CommandBuilder.() -> Unit) {
         subCommandBuilders.add(
             CommandBuilder(name).apply(block)

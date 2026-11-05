@@ -18,155 +18,191 @@ import org.bukkit.entity.Player
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> NativeArgumentType<T>.nativeTypeToBrigadierArgumentType(): ArgumentType<T> =
     when (this) {
-        is NativeArgumentType.BooleanArgumentType -> {
+        is NativeArgumentType.BooleanType -> {
             BoolArgumentType.bool()
         }
-        is NativeArgumentType.IntArgumentType -> {
+
+        is NativeArgumentType.IntType -> {
             IntegerArgumentType.integer(this.min, this.max)
         }
-        is NativeArgumentType.FloatArgumentType -> {
+
+        is NativeArgumentType.FloatType -> {
             FloatArgumentType.floatArg(this.min, this.max)
         }
-        is NativeArgumentType.DoubleArgumentType -> {
+
+        is NativeArgumentType.DoubleType -> {
             DoubleArgumentType.doubleArg(this.min, this.max)
         }
-        is NativeArgumentType.LongArgumentType -> {
+
+        is NativeArgumentType.LongType -> {
             LongArgumentType.longArg(this.min, this.max)
         }
-        is NativeArgumentType.StringArgumentType -> {
+
+        is NativeArgumentType.StringArgType -> {
             when (this.type) {
                 StringType.WORD -> StringArgumentType.word()
                 StringType.QUOTED -> StringArgumentType.string()
                 StringType.GREEDY -> StringArgumentType.greedyString()
             }
         }
-        is NativeArgumentType.EntityArgumentType -> {
+
+        is NativeArgumentType.Entity -> {
             CustomNativeArgumentType<Entity, EntitySelectorArgumentResolver>(
                 ArgumentTypes.entity()
             ) { nativeValue, source ->
                 nativeValue.resolve(source).first()
             }
         }
-        is NativeArgumentType.EntitiesArgumentType -> {
+
+        is NativeArgumentType.Entities -> {
             CustomNativeArgumentType<List<Entity>, EntitySelectorArgumentResolver>(
                 ArgumentTypes.entities()
             ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
-        is NativeArgumentType.PlayerArgumentType -> {
+
+        is NativeArgumentType.Player -> {
             CustomNativeArgumentType<Player, PlayerSelectorArgumentResolver>(
                 ArgumentTypes.player()
             ) { nativeValue, source ->
                 nativeValue.resolve(source).first()
             }
         }
-        is NativeArgumentType.PlayersArgumentType -> {
+
+        is NativeArgumentType.Players -> {
             CustomNativeArgumentType<List<Player>, PlayerSelectorArgumentResolver>(
                 ArgumentTypes.players()
             ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
-        is NativeArgumentType.PlayerProfilesArgumentType -> {
+
+        is NativeArgumentType.PlayerProfiles -> {
             CustomNativeArgumentType<Collection<PlayerProfile>, PlayerProfileListResolver>(
                 ArgumentTypes.playerProfiles()
             ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
-        is NativeArgumentType.BlockPositionArgumentType -> {
+
+        is NativeArgumentType.BlockPosition -> {
             CustomNativeArgumentType(ArgumentTypes.blockPosition()) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
-        is NativeArgumentType.FinePositionArgumentType -> {
+
+        is NativeArgumentType.FinePosition -> {
             CustomNativeArgumentType(
                 ArgumentTypes.finePosition(this.centerIntegers)
             ) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
-        is NativeArgumentType.RotationArgumentType -> {
+
+        is NativeArgumentType.Rotation -> {
             CustomNativeArgumentType(ArgumentTypes.rotation()) { nativeValue, source ->
                 nativeValue.resolve(source)
             }
         }
-        is NativeArgumentType.BlockStateArgumentType -> {
+
+        is NativeArgumentType.BlockState -> {
             ArgumentTypes.blockState()
         }
-        is NativeArgumentType.ItemStackArgumentType -> {
+
+        is NativeArgumentType.ItemStack -> {
             ArgumentTypes.itemStack()
         }
-        is NativeArgumentType.ItemPredicateArgumentType -> {
+
+        is NativeArgumentType.ItemPredicate -> {
             ArgumentTypes.itemPredicate()
         }
-        is NativeArgumentType.NamedColorArgumentType -> {
+
+        is NativeArgumentType.NamedColor -> {
             ArgumentTypes.namedColor()
         }
-        is NativeArgumentType.ComponentArgumentType -> {
+
+        is NativeArgumentType.Component -> {
             ArgumentTypes.component()
         }
-        is NativeArgumentType.StyleArgumentType -> {
+
+        is NativeArgumentType.Style -> {
             ArgumentTypes.style()
         }
-        is NativeArgumentType.SignedMessageArgumentType -> {
+
+        is NativeArgumentType.SignedMessage -> {
             ArgumentTypes.signedMessage()
         }
-        is NativeArgumentType.ScoreboardDisplaySlotArgumentType -> {
+
+        is NativeArgumentType.ScoreboardDisplaySlot -> {
             ArgumentTypes.scoreboardDisplaySlot()
         }
-        is NativeArgumentType.NamespacedKeyArgumentType -> {
+
+        is NativeArgumentType.NamespacedKey -> {
             ArgumentTypes.namespacedKey()
         }
-        is NativeArgumentType.KeyArgumentType -> {
+
+        is NativeArgumentType.Key -> {
             ArgumentTypes.key()
         }
-        is NativeArgumentType.IntegerRangeArgumentType -> {
+
+        is NativeArgumentType.IntegerRange -> {
             CustomNativeArgumentType<Range<Int>, IntegerRangeProvider>(
                 ArgumentTypes.integerRange()
             ) { nativeValue, source ->
                 nativeValue.range()
             }
         }
-        is NativeArgumentType.DoubleRangeArgumentType -> {
+
+        is NativeArgumentType.DoubleRange -> {
             CustomNativeArgumentType<Range<Double>, DoubleRangeProvider>(
                 ArgumentTypes.doubleRange()
             ) { nativeValue, source ->
                 nativeValue.range()
             }
         }
-        is NativeArgumentType.WorldArgumentType -> {
+
+        is NativeArgumentType.World -> {
             ArgumentTypes.world()
         }
-        is NativeArgumentType.GameModeArgumentType -> {
+
+        is NativeArgumentType.GameMode -> {
             ArgumentTypes.gameMode()
         }
-        is NativeArgumentType.HeightMapArgumentType -> {
+
+        is NativeArgumentType.HeightMap -> {
             ArgumentTypes.heightMap()
         }
-        is NativeArgumentType.UuidArgumentType -> {
+
+        is NativeArgumentType.Uuid -> {
             ArgumentTypes.uuid()
         }
-        is NativeArgumentType.ObjectiveCriteriaArgumentType -> {
+
+        is NativeArgumentType.ObjectiveCriteria -> {
             ArgumentTypes.objectiveCriteria()
         }
-        is NativeArgumentType.EntityAnchorArgumentType -> {
+
+        is NativeArgumentType.EntityAnchor -> {
             ArgumentTypes.entityAnchor()
         }
-        is NativeArgumentType.TimeArgumentType -> {
+
+        is NativeArgumentType.Time -> {
             ArgumentTypes.time(this.minTime)
         }
-        is NativeArgumentType.TemplateMirrorArgumentType -> {
+
+        is NativeArgumentType.TemplateMirror -> {
             ArgumentTypes.templateMirror()
         }
-        is NativeArgumentType.TemplateRotationArgumentType -> {
+
+        is NativeArgumentType.TemplateRotation -> {
             ArgumentTypes.templateRotation()
         }
-        is NativeArgumentType.ResourceArgumentType<*> -> {
+
+        is NativeArgumentType.Resource<*> -> {
             ArgumentTypes.resource(this.registryKey)
         }
-        is NativeArgumentType.ResourceKeyArgumentType<*> -> {
+
+        is NativeArgumentType.ResourceKey<*> -> {
             ArgumentTypes.resourceKey(this.registryKey)
         }
     } as ArgumentType<T>

@@ -122,7 +122,7 @@ is more recommended.
 ```kotlin
 class FruitArgumentType : ComshopCustomArgumentType<Fruit, String> {
     override val nativeArgumentType: NativeArgumentType<String> =
-        NativeArgumentType.StringArgumentType(StringType.WORD)
+        NativeArgumentType.StringArgType(StringType.WORD)
 
     override fun parse(nativeValue: String, source: CommandSourceStack): Fruit {
         return Fruit.valueOf(nativeValue.uppercase())

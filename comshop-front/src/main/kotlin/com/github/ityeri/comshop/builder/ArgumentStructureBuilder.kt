@@ -1,11 +1,11 @@
 package com.github.ityeri.comshop.builder
 
 import com.github.ityeri.comshop.AnyArgumentNode
-import com.github.ityeri.comshop.context.SourceContext
 import com.github.ityeri.comshop.ComshopDsl
 import com.github.ityeri.comshop.api.argument.ComshopArgumentType
 import com.github.ityeri.comshop.api.node.ComshopCommandNode
 import com.github.ityeri.comshop.api.node.Node
+import com.github.ityeri.comshop.context.SourceContext
 
 
 @ComshopDsl
@@ -28,6 +28,7 @@ sealed interface ArgumentStructureBuilder {
                 this.requiresChecker,
                 this.customSuggestionProvider
             )
+
         fun requires(requiresChecker: SourceContext.() -> Boolean): SingleArgumentBuilder<T> =
             SingleArgumentBuilder(
                 this.name,
@@ -35,6 +36,7 @@ sealed interface ArgumentStructureBuilder {
                 requiresChecker,
                 this.customSuggestionProvider
             )
+
         fun suggests(customSuggestionProvider: SuggestionBuilder.() -> Unit): SingleArgumentBuilder<T> =
             SingleArgumentBuilder(
                 this.name,
@@ -68,6 +70,7 @@ sealed interface ArgumentStructureBuilder {
     ) : ArgumentStructureBuilder, NativeArgumentTypeFactory() {
         val <T : Any> ComshopArgumentType<T>.asArg: SingleArgumentBuilder<T>
             get() = SingleArgumentBuilder(argumentType = this)
+
         override fun isEmpty(): Boolean = subBuilders.all { it.isEmpty() }
 
         infix fun <T : Any> String.named(builder: SingleArgumentBuilder<T>) {
@@ -78,7 +81,7 @@ sealed interface ArgumentStructureBuilder {
     @ComshopDsl
     class ChainStructureBuilder(
         subBuilders: MutableList<ArgumentStructureBuilder> = mutableListOf()
-    ): IterableStructureBuilder(subBuilders) {
+    ) : IterableStructureBuilder(subBuilders) {
         fun unions(block: UnionStructureBuilder.() -> Unit) {
             subBuilders.add(UnionStructureBuilder().apply(block))
         }
@@ -92,10 +95,11 @@ sealed interface ArgumentStructureBuilder {
     @ComshopDsl
     class UnionStructureBuilder(
         subBuilders: MutableList<ArgumentStructureBuilder> = mutableListOf()
-    ): IterableStructureBuilder(subBuilders) {
+    ) : IterableStructureBuilder(subBuilders) {
         fun argument(builder: ArgumentStructureBuilder) {
             subBuilders.add(builder)
         }
+
         fun arguments(block: ChainStructureBuilder.() -> Unit) {
             subBuilders.add(ChainStructureBuilder().apply(block))
         }
